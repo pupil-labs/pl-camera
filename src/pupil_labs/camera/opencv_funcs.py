@@ -20,12 +20,18 @@ def undistort_points(
     points_2d: CT.Points2DLike,
     camera_matrix: CT.CameraMatrixLike,
     distortion_coefficients: CT.DistortionCoefficientsLike = None,
+    new_camera_matrix: Optional[CT.CameraMatrixLike] = None,
 ) -> CT.Points3D:
     distortion_coefficients = np.asarray(distortion_coefficients, dtype=np.float64)
     camera_matrix = np.asarray(camera_matrix, dtype=np.float64)
     np_points_2d = convert_points_to_unstructured_numpy(points_2d).squeeze()
-    np_undistorted_points_2d = cv2.undistortPoints(
-        np_points_2d, camera_matrix, distortion_coefficients
+    np_undistorted_points_2d = cv2.undistortPointsIter(
+        src=np_points_2d,
+        cameraMatrix=camera_matrix,
+        distCoeffs=distortion_coefficients,
+        R=None,
+        P=new_camera_matrix,
+        criteria=(cv2.TERM_CRITERIA_COUNT | cv2.TERM_CRITERIA_EPS, 100, 0.0001),
     )
 
     np_points_3d = cv2.convertPointsToHomogeneous(np_undistorted_points_2d)
@@ -39,7 +45,7 @@ def project_points(
 ) -> CT.Points2D:
     rvec = tvec = np.zeros((1, 1, 3))
 
-    dist_coeffs = np.asarray(distortion_coefficients, dtype=np.float64)
+    distortion_coefficients = np.asarray(distortion_coefficients, dtype=np.float64)
     camera_matrix = np.asarray(camera_matrix, dtype=np.float64)
 
     np_points_3d = convert_points_to_unstructured_numpy(points_3d).squeeze()
@@ -47,7 +53,11 @@ def project_points(
         np_points_3d = cv2.convertPointsToHomogeneous(np_points_3d)
 
     points_2d, _ = cv2.projectPoints(
-        np_points_3d, rvec, tvec, camera_matrix, dist_coeffs
+        objectPoints=np_points_3d,
+        rvec=rvec,
+        tvec=tvec,
+        cameraMatrix=camera_matrix,
+        distCoeffs=distortion_coefficients,
     )
     return points_2d.squeeze()
 

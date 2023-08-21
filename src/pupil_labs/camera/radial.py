@@ -3,7 +3,7 @@ from typing import Annotated, Optional
 import cv2
 import numpy as np
 from cv2 import remap
-from pydantic import AfterValidator, ConfigDict, Field, PlainSerializer, conint
+from pydantic import AfterValidator, ConfigDict, Field
 from pydantic.dataclasses import dataclass
 
 from pupil_labs.camera import opencv_funcs
@@ -100,7 +100,7 @@ class CameraRadial(CameraRadialBase):
         )
         return remapped
 
-    def unproject_points(
+    def undistort_points(
         self, points_2d: CT.Points2DLike, use_distortion: bool = True
     ) -> CT.Points3D:
         distortion_coefficients = self.distortion_coefficients

@@ -63,7 +63,7 @@ class CameraBase(abc.ABC):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def unproject_points(
+    def undistort_points(
         self, points_2d: CT.Points3DLike, use_distortion: bool = True
     ) -> CT.Points3D:
         raise NotImplementedError()
@@ -77,11 +77,11 @@ class CameraBase(abc.ABC):
     def undistort_points_on_image_plane(
         self, points_2d: CT.Points2DLike
     ) -> CT.Points2D:
-        points_3d = self.unproject_points(points_2d, use_distortion=True)
+        points_3d = self.undistort_points(points_2d, use_distortion=True)
         points_2d = self.project_points(points_3d, use_distortion=False)
         return points_2d
 
     def distort_points_on_image_plane(self, points_2d: CT.Points2DLike) -> CT.Points2D:
-        points_3d = self.unproject_points(points_2d, use_distortion=False)
+        points_3d = self.undistort_points(points_2d, use_distortion=False)
         points_2d = self.project_points(points_3d, use_distortion=True)
         return points_2d

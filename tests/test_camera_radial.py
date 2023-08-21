@@ -53,11 +53,11 @@ def camera_radial():
         ((100, 200), (800, 600)),  # tuple of tuples
     ],
 )
-def test_unproject_points(camera_radial, points):
+def test_unproject_points(camera_radial: CameraRadial, points):
     expected = np.array([[-0.75240, -0.55311, 1.0], [0.32508, 0.08498, 1.0]])
 
     assert_almost_equal(
-        camera_radial.unproject_points(points),
+        camera_radial.undistort_points(points),
         np.asarray(expected),
         decimal=3,
     )
@@ -81,7 +81,7 @@ def test_unproject_points(camera_radial, points):
         ((-0.75170, -0.55260), (0.32508, 0.08498)),  # tuple of tuples
     ],
 )
-def test_project_2d_points(camera_radial, points):
+def test_project_2d_points(camera_radial: CameraRadial, points):
     expected = np.array([(100.3349, 200.2458), (799.9932, 599.9996)])
     assert_almost_equal(
         camera_radial.project_points(points),
@@ -197,3 +197,11 @@ def test_valid_distortion_coefficients(
 ):
     CameraRadial(1000, 1000, [[1, 2, 3], [1, 2, 3], [1, 2, 3]], distortion_coefficients)
     camera_radial.distortion_coefficients = distortion_coefficients
+
+
+def test_redistort_edges(camera_radial: CameraRadial):
+    original = [(0, 0), (0, 1080), (1088, 0), (1088, 1080)]
+
+    undistorted = camera_radial.undistort_points(original)
+    distorted = camera_radial.project_points(undistorted)
+    assert_almost_equal(original, distorted, decimal=4)
