@@ -60,7 +60,7 @@ def to_np_point_array(
             )
         np_points = structured_to_unstructured(points, dtype=np.float64)[:, :n_coords]  # type: ignore
     else:
-        np_points = np.asarray(points, dtype=np.float64).squeeze()
+        np_points = np.asarray(points, dtype=np.float64)
         data_n_coords = (
             np_points.shape[0] if np_points.ndim == 1 else np_points.shape[1]
         )

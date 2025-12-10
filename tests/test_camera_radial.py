@@ -33,6 +33,21 @@ def camera_radial():
 @pytest.mark.parametrize(
     "points",
     [
+        np.array([100, 200]),  # unstructured ints
+        np.array([100, 200], dtype=np.int32),  # unstructured ints
+        [100, 200],  # list
+        (100, 200),  # tuple
+    ],
+)
+def test_unproject_point(camera_radial: CameraRadial, points):
+    expected = np.array([-0.75240, -0.55311, 1.0])
+    undistorted = camera_radial.unproject_points(points)
+    assert_almost_equal(undistorted, np.asarray(expected), decimal=3)
+
+
+@pytest.mark.parametrize(
+    "points",
+    [
         np.array([(100, 200), (800, 600)]),  # unstructured ints
         np.array(
             [(100, 200), (800, 600)],
@@ -55,44 +70,20 @@ def camera_radial():
 )
 def test_unproject_points(camera_radial: CameraRadial, points):
     expected = np.array([[-0.75240, -0.55311, 1.0], [0.32508, 0.08498, 1.0]])
-    undistorted = camera_radial.undistort_points(points)
+    undistorted = camera_radial.unproject_points(points)
     assert_almost_equal(undistorted, np.asarray(expected), decimal=3)
 
 
-@pytest.mark.parametrize(
-    "points",
-    [
-        np.array([(-0.75170, -0.55260), (0.32508, 0.08498)]),  # unstructured
-        np.array([
-            [[-0.75170, -0.55260], [0.32508, 0.08498]]
-        ]),  # unsqueezed unstructured
-        np.array(
-            [(-0.75170, -0.55260), (0.32508, 0.08498)],
-            dtype=[("x", np.float32), ("y", np.float32)],
-        ),  # structured
-        [(-0.75170, -0.55260), (0.32508, 0.08498)],  # list of tuples
-        ([-0.75170, -0.55260], [0.32508, 0.08498]),  # tuple of lists
-        [[-0.75170, -0.55260], [0.32508, 0.08498]],  # list of lists
-        [[[-0.75170, -0.55260], [0.32508, 0.08498]]],  # unsqueezed list of lists
-        ((-0.75170, -0.55260), (0.32508, 0.08498)),  # tuple of tuples
-    ],
-)
-def test_project_2d_points(camera_radial: CameraRadial, points):
-    expected = np.array([(100.3349, 200.2458), (799.9932, 599.9996)])
-    projected = camera_radial.project_points(points)
-    assert_almost_equal(projected, expected, decimal=4)
+def test_unproject_point_without_distortion(camera_radial: CameraRadial):
+    points = np.array([100.3349, 200.2458])
+    undistorted = camera_radial.unproject_points(points, use_distortion=False)
+    expected = np.array([-0.59947633, -0.44022776, 1.0])
+    assert_almost_equal(undistorted, expected, decimal=4)
 
 
-def test_project_points_without_distortion(camera_radial: CameraRadial):
-    points = np.array([[-0.59947633, -0.44022776], [0.31355363, 0.08201807]])
-    projected = camera_radial.project_points(points, use_distortion=False)
-    expected = np.array([(100.3349, 200.2458), (799.9932, 599.9996)])
-    assert_almost_equal(projected, expected, decimal=4)
-
-
-def test_undistort_points_without_distortion(camera_radial: CameraRadial):
+def test_unproject_points_without_distortion(camera_radial: CameraRadial):
     points = np.array([(100.3349, 200.2458), (799.9932, 599.9996)])
-    undistorted = camera_radial.undistort_points(points, use_distortion=False)
+    undistorted = camera_radial.unproject_points(points, use_distortion=False)
     expected = np.array([
         [-0.59947633, -0.44022776, 1.0],
         [0.31355363, 0.08201807, 1.0],
@@ -103,10 +94,24 @@ def test_undistort_points_without_distortion(camera_radial: CameraRadial):
 @pytest.mark.parametrize(
     "points",
     [
+        np.array([-0.75170, -0.55260, 1.0]),  # unstructured
+        [-0.75170, -0.55260, 1.0],  # list
+        (-0.75170, -0.55260, 1.0),  # tuple
+    ],
+)
+def test_project_point(camera_radial: CameraRadial, points: CT.Points2DLike):
+    expected = np.array([100.3349, 200.2458])
+    assert_almost_equal(
+        camera_radial.project_points(points),
+        expected,
+        decimal=4,
+    )
+
+
+@pytest.mark.parametrize(
+    "points",
+    [
         np.array([(-0.75170, -0.55260, 1.0), (0.32508, 0.08498, 1.0)]),  # unstructured
-        np.array([
-            [[-0.75170, -0.55260, 1.0], [0.32508, 0.08498, 1.0]]
-        ]),  # unsqueezed unstructured
         np.array(
             [(-0.75170, -0.55260, 1.0), (0.32508, 0.08498, 1.0)],
             dtype=[("x", np.float32), ("y", np.float32), ("z", np.float32)],
@@ -114,19 +119,44 @@ def test_undistort_points_without_distortion(camera_radial: CameraRadial):
         [(-0.75170, -0.55260, 1.0), (0.32508, 0.08498, 1.0)],  # list of tuples
         ([-0.75170, -0.55260, 1.0], [0.32508, 0.08498, 1.0]),  # tuple of lists
         [[-0.75170, -0.55260, 1.0], [0.32508, 0.08498, 1.0]],  # list of lists
-        [
-            [[-0.75170, -0.55260, 1.0], [0.32508, 0.08498, 1.0]]
-        ],  # unsqueezed list of lists
         ((-0.75170, -0.55260, 1.0), (0.32508, 0.08498, 1.0)),  # tuple of tuples
     ],
 )
-def test_project_3d_points(camera_radial: CameraRadial, points: CT.Points2DLike):
+def test_project_points(camera_radial: CameraRadial, points: CT.Points2DLike):
     expected = np.array([(100.3349, 200.2458), (799.9932, 599.9996)])
     assert_almost_equal(
         camera_radial.project_points(points),
         expected,
         decimal=4,
     )
+
+
+def test_project_point_without_distortion(camera_radial: CameraRadial):
+    points = np.array([-0.59947633, -0.44022776, 1.0])
+    projected = camera_radial.project_points(points, use_distortion=False)
+    expected = np.array([100.3349, 200.2458])
+    assert_almost_equal(projected, expected, decimal=4)
+
+
+def test_project_points_without_distortion(camera_radial: CameraRadial):
+    points = np.array([[-0.59947633, -0.44022776, 1.0], [0.31355363, 0.08201807, 1.0]])
+    projected = camera_radial.project_points(points, use_distortion=False)
+    expected = np.array([(100.3349, 200.2458), (799.9932, 599.9996)])
+    assert_almost_equal(projected, expected, decimal=4)
+
+
+def test_undistort_point(camera_radial: CameraRadial):
+    points = np.array([100.3349, 200.2458])
+    undistorted = camera_radial.undistort_points(points)
+    expected = np.array([-16.314667, 114.23032316])
+    assert_almost_equal(undistorted, expected, decimal=4)
+
+
+def test_undistort_points(camera_radial: CameraRadial):
+    points = np.array([(100.3349, 200.2458), (799.9932, 599.9996)])
+    undistorted = camera_radial.undistort_points(points)
+    expected = np.array([[-16.314667, 114.23032316], [808.82587932, 602.26686841]])
+    assert_almost_equal(undistorted, expected, decimal=4)
 
 
 @pytest.mark.parametrize("width", [-1, 0])
@@ -209,9 +239,9 @@ def test_valid_distortion_coefficients(
     camera_radial.distortion_coefficients = distortion_coefficients
 
 
-def test_redistort_edges(camera_radial: CameraRadial):
+def test_unprojection_and_reprojection(camera_radial: CameraRadial):
     original = [(0, 0), (0, 1080), (1088, 0), (1088, 1080)]
 
-    undistorted = camera_radial.undistort_points(original)
-    distorted = camera_radial.project_points(undistorted)
-    assert_almost_equal(original, distorted, decimal=4)
+    unprojected = camera_radial.unproject_points(original)
+    reprojected = camera_radial.project_points(unprojected)
+    assert_almost_equal(original, reprojected, decimal=4)

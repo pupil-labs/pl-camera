@@ -1,11 +1,12 @@
 from functools import cached_property
-from typing import Literal, overload
 
 import cv2
 import numpy as np
+import numpy.typing as npt
+from numpy.lib.recfunctions import structured_to_unstructured
 
 from pupil_labs.camera import custom_types as CT
-from pupil_labs.camera import opencv_funcs, utils
+from pupil_labs.camera import opencv_funcs
 
 
 class CameraRadial:
@@ -140,79 +141,55 @@ class CameraRadial:
         )
         return remapped
 
-    @overload
-    def undistort_points(
+    def unproject_points(
         self,
         points_2d: CT.Points2DLike,
         use_distortion: bool = True,
-        *,
-        reproject_to_image: Literal[False] = False,
         use_optimal_camera_matrix: bool = False,
-    ) -> CT.Points3D: ...
-    @overload
-    def undistort_points(
-        self,
-        points_2d: CT.Points2DLike,
-        use_distortion: bool = True,
-        *,
-        reproject_to_image: Literal[True] = True,
-        use_optimal_camera_matrix: bool = False,
-    ) -> CT.Points2D: ...
-    def undistort_points(
-        self,
-        points_2d: CT.Points2DLike,
-        use_distortion: bool = True,
-        reproject_to_image: bool = False,
-        use_optimal_camera_matrix: bool = False,
-    ) -> CT.Points3D | CT.Points2D:
-        """Undistorts 2D image points using the camera's intrinsics.
+    ) -> CT.Points3D:
+        """Unprojects 2D image points to 3D space using the camera's intrinsics.
 
         Args:
-            points_2d: Array-like of 2D point(s) to be undistorted.
+            points_2d: Array-like of 2D point(s) to be unprojected.
             use_distortion: If True, applies distortion correction using the camera's
                 distortion coefficients. If False, ignores distortion correction.
-            reproject_to_image: If True, reprojects undistorted points back to the image
-                plane using the camera matrix.
             use_optimal_camera_matrix: If True, uses the optimal camera matrix for
-                reprojection.
+                unprojection.
 
         """
-        points_2d = utils.to_np_point_array(points_2d)
+        points_2d = self._to_np_array(points_2d)
+
+        if not (
+            (points_2d.ndim == 2 and points_2d.shape[1] == 2)
+            or (points_2d.ndim == 1 and points_2d.shape[0] == 2)
+        ):
+            raise ValueError(
+                f"points_2d should have shape `(N, 2)` or `(2,)`, got {points_2d.shape}"
+            )
 
         input_dim = points_2d.ndim
         if input_dim == 1:
             points_2d = points_2d[np.newaxis, :]
 
-        if use_optimal_camera_matrix and not reproject_to_image:
-            raise ValueError(
-                "use_optimal_camera_matrix can only be True when reproject_to_image is True"  # noqa: E501
-            )
+        if use_optimal_camera_matrix:
+            camera_matrix = self.optimal_camera_matrix
+        else:
+            camera_matrix = self.camera_matrix
 
         if use_distortion:
             distortion_coefficients = self.distortion_coefficients
         else:
             distortion_coefficients = None
 
-        if reproject_to_image:
-            new_camera_matrix = self.camera_matrix
-            if use_optimal_camera_matrix:
-                new_camera_matrix = self.optimal_camera_matrix
-        else:
-            new_camera_matrix = None
+        points_3d = opencv_funcs.undistort_points(
+            points_2d, camera_matrix, distortion_coefficients, None
+        )
 
-        points_undistorted = opencv_funcs.undistort_points(
-            points_2d, self.camera_matrix, distortion_coefficients, new_camera_matrix
-        ).reshape(-1, 3)
-
-        if reproject_to_image:
-            points_undistorted = (
-                points_undistorted[:, :2] / points_undistorted[:, 2, np.newaxis]
-            )
-
+        # Remove unnecessary dimension if input was a single point
         if input_dim == 1:
-            points_undistorted = points_undistorted[0]
+            points_3d = points_3d[0]
 
-        return points_undistorted
+        return points_3d
 
     def project_points(
         self,
@@ -223,13 +200,27 @@ class CameraRadial:
         """Projects 3D points onto the 2D image plane using the camera's intrinsics.
 
         Args:
-            points_3d: Array of 3D points to be projected.
+            points_3d: Array of 3D point(s) to be projected.
             use_distortion: If True, applies distortion using the camera's distortion
                 coefficients. If False, ignores distortion.
             use_optimal_camera_matrix: If True, uses the optimal camera matrix for
                 projection instead of the regular camera matrix.
 
         """
+        points_3d = self._to_np_array(points_3d)
+
+        if not (
+            (points_3d.ndim == 2 and points_3d.shape[1] == 3)
+            or (points_3d.ndim == 1 and points_3d.shape[0] == 3)
+        ):
+            raise ValueError(
+                f"points_3d should have shape `(N, 3)` or `(3,)`, got {points_3d.shape}"
+            )
+
+        input_dim = points_3d.ndim
+        if input_dim == 1:
+            points_3d = points_3d[np.newaxis, :]
+
         if use_distortion:
             distortion_coefficients = self.distortion_coefficients
         else:
@@ -240,6 +231,72 @@ class CameraRadial:
         else:
             camera_matrix = self.camera_matrix
 
-        return opencv_funcs.project_points(
+        points_2d = opencv_funcs.project_points(
             points_3d, camera_matrix, distortion_coefficients
+        ).reshape(-1, 2)
+
+        if input_dim == 1:
+            points_2d = points_2d[0]
+
+        return points_2d
+
+    def undistort_points(
+        self,
+        points_2d: CT.Points2DLike,
+        use_optimal_camera_matrix: bool = False,
+    ) -> CT.Points2D:
+        """Undistorts 2D image points using the camera's intrinsics.
+
+        Args:
+            points_2d: Array-like of 2D point(s) to be undistorted.
+            use_optimal_camera_matrix: If True, uses the *regular* camera matrix for
+                unprojection, and the optimal camera matrix for reprojection. If False,
+                uses the regular camera matrix for both.
+
+        """
+        points_2d = self._to_np_array(points_2d)
+
+        if not (
+            (points_2d.ndim == 2 and points_2d.shape[1] == 2)
+            or (points_2d.ndim == 1 and points_2d.shape[0] == 2)
+        ):
+            raise ValueError(
+                f"points_2d should have shape `(N, 2)` or `(2,)`, got {points_2d.shape}"
+            )
+
+        input_dim = points_2d.ndim
+        if input_dim == 1:
+            points_2d = points_2d[np.newaxis, :]
+
+        if use_optimal_camera_matrix:
+            camera_matrix = self.optimal_camera_matrix
+        else:
+            camera_matrix = self.camera_matrix
+
+        points_undistorted = opencv_funcs.undistort_points(
+            points_2d, camera_matrix, self.distortion_coefficients, camera_matrix
+        ).reshape(-1, 3)
+
+        points_undistorted = (
+            points_undistorted[:, :2] / points_undistorted[:, 2, np.newaxis]
         )
+
+        if input_dim == 1:
+            points_undistorted = points_undistorted[0]
+
+        return points_undistorted
+
+    @staticmethod
+    def _to_np_array(
+        points: CT.Points2DLike | CT.Points3DLike,
+    ) -> npt.NDArray[np.float64]:
+        """Convert a list, array, or record array of points into an unstructured array."""  # noqa: E501
+        if not len(points):
+            raise ValueError("points array is empty")
+
+        if hasattr(points, "dtype") and points.dtype.names is not None:  # type: ignore
+            np_points = structured_to_unstructured(points, dtype=np.float64)  # type: ignore
+        else:
+            np_points = np.asarray(points, dtype=np.float64)
+
+        return np_points
