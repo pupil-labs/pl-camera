@@ -31,7 +31,7 @@ def camera_radial():
 
 
 @pytest.mark.parametrize(
-    "points",
+    "point",
     [
         np.array([100, 200]),  # unstructured ints
         np.array([100, 200], dtype=np.int32),  # unstructured ints
@@ -39,9 +39,9 @@ def camera_radial():
         (100, 200),  # tuple
     ],
 )
-def test_unproject_point(camera_radial: CameraRadial, points):
+def test_unproject_point(camera_radial: CameraRadial, point):
     expected = np.array([-1.15573178, -0.67095352, 1.0])
-    unprojected = camera_radial.unproject_points(points)
+    unprojected = camera_radial.unproject_points(point)
     assert_almost_equal(unprojected, np.asarray(expected), decimal=3)
 
 
@@ -78,8 +78,8 @@ def test_unproject_points(camera_radial: CameraRadial, points):
 
 
 def test_unproject_point_without_distortion(camera_radial: CameraRadial):
-    points = np.array([100.3349, 200.2458])
-    unprojected = camera_radial.unproject_points(points, use_distortion=False)
+    point = np.array([100.3349, 200.2458])
+    unprojected = camera_radial.unproject_points(point, use_distortion=False)
     expected = np.array([-0.80300261, -0.46495873, 1.0])
     assert_almost_equal(unprojected, expected, decimal=4)
 
@@ -135,15 +135,15 @@ def test_project_points(camera_radial: CameraRadial, points: CT.Points2DLike):
 
 
 def test_project_point_without_distortion(camera_radial: CameraRadial):
-    points = np.array([-0.59947633, -0.44022776, 1.0])
-    projected = camera_radial.project_points(points, use_distortion=False)
+    point = np.array([-0.59947633, -0.44022776, 1.0])
+    projected = camera_radial.project_points(point, use_distortion=False)
     expected = np.array([281.80279595, 222.27963684])
     assert_almost_equal(projected, expected, decimal=4)
 
 
 def test_undistort_point(camera_radial: CameraRadial):
-    points = np.array([10, 10])
-    undistorted = camera_radial.undistort_points(points)
+    point = np.array([10, 10])
+    undistorted = camera_radial.undistort_points(point)
     expected = np.array([-688.71195284, -518.85317532])
     assert_almost_equal(undistorted, expected, decimal=4)
 
