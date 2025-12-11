@@ -1,12 +1,11 @@
 from functools import cached_property
+from typing import cast
 
 import cv2
 import numpy as np
-import numpy.typing as npt
-from numpy.lib.recfunctions import structured_to_unstructured
 
 from pupil_labs.camera import custom_types as CT
-from pupil_labs.camera import opencv_funcs
+from pupil_labs.camera.utils import to_np_point_array
 
 
 class CameraRadial:
@@ -104,26 +103,32 @@ class CameraRadial:
     def _optimal_undistort_rectify_map(
         self,
     ) -> tuple[CT.UndistortRectifyMap, CT.UndistortRectifyMap]:
-        return cv2.initUndistortRectifyMap(
-            self.camera_matrix,
-            self.distortion_coefficients,
-            None,
-            self.optimal_camera_matrix,
-            (self.pixel_width, self.pixel_height),
-            cv2.CV_32FC1,
+        return cast(
+            tuple[CT.UndistortRectifyMap, CT.UndistortRectifyMap],
+            cv2.initUndistortRectifyMap(
+                self.camera_matrix,
+                self.distortion_coefficients,
+                None,
+                self.optimal_camera_matrix,
+                (self.pixel_width, self.pixel_height),
+                cv2.CV_32FC1,
+            ),
         )
 
     @cached_property
     def _undistort_rectify_map(
         self,
     ) -> tuple[CT.UndistortRectifyMap, CT.UndistortRectifyMap]:
-        return cv2.initUndistortRectifyMap(
-            self.camera_matrix,
-            self.distortion_coefficients,
-            None,
-            self.camera_matrix,
-            (self.pixel_width, self.pixel_height),
-            cv2.CV_32FC1,
+        return cast(
+            tuple[CT.UndistortRectifyMap, CT.UndistortRectifyMap],
+            cv2.initUndistortRectifyMap(
+                self.camera_matrix,
+                self.distortion_coefficients,
+                None,
+                self.camera_matrix,
+                (self.pixel_width, self.pixel_height),
+                cv2.CV_32FC1,
+            ),
         )
 
     def undistort_image(
@@ -162,7 +167,7 @@ class CameraRadial:
                 unprojection.
 
         """
-        points_2d = self._to_np_array(points_2d)
+        points_2d = to_np_point_array(points_2d, 2)
 
         if not (
             (points_2d.ndim == 2 and points_2d.shape[1] == 2)
@@ -176,25 +181,26 @@ class CameraRadial:
         if input_dim == 1:
             points_2d = points_2d[np.newaxis, :]
 
+        camera_matrix = self.camera_matrix
         if use_optimal_camera_matrix:
             camera_matrix = self.optimal_camera_matrix
-        else:
-            camera_matrix = self.camera_matrix
 
+        distortion_coefficients = None
         if use_distortion:
             distortion_coefficients = self.distortion_coefficients
-        else:
-            distortion_coefficients = None
 
-        points_3d = opencv_funcs.undistort_points(
-            points_2d, camera_matrix, distortion_coefficients, None
+        points_3d = cv2.undistortPoints(
+            src=points_2d,
+            cameraMatrix=camera_matrix,
+            distCoeffs=distortion_coefficients,
         )
+        points_3d = cv2.convertPointsToHomogeneous(np.array(points_3d))
 
         # Remove unnecessary dimension if input was a single point
         if input_dim == 1:
             points_3d = points_3d[0]
 
-        return points_3d
+        return points_3d.squeeze()
 
     def project_points(
         self,
@@ -212,7 +218,7 @@ class CameraRadial:
                 projection instead of the regular camera matrix.
 
         """
-        points_3d = self._to_np_array(points_3d)
+        points_3d = to_np_point_array(points_3d, 3)
 
         if not (
             (points_3d.ndim == 2 and points_3d.shape[1] == 3)
@@ -260,7 +266,7 @@ class CameraRadial:
                 uses the regular camera matrix for both.
 
         """
-        points_2d = self._to_np_array(points_2d)
+        points_2d = to_np_point_array(points_2d, 2)
 
         if not (
             (points_2d.ndim == 2 and points_2d.shape[1] == 2)
@@ -274,35 +280,15 @@ class CameraRadial:
         if input_dim == 1:
             points_2d = points_2d[np.newaxis, :]
 
+        camera_matrix = self.camera_matrix
         if use_optimal_camera_matrix:
             camera_matrix = self.optimal_camera_matrix
-        else:
-            camera_matrix = self.camera_matrix
 
-        points_undistorted = opencv_funcs.undistort_points(
-            points_2d, camera_matrix, self.distortion_coefficients, camera_matrix
-        ).reshape(-1, 3)
-
-        points_undistorted = (
-            points_undistorted[:, :2] / points_undistorted[:, 2, np.newaxis]
+        undistorted_2d = cv2.undistortPoints(
+            src=points_2d,
+            cameraMatrix=camera_matrix,
+            distCoeffs=self.distortion_coefficients,
+            R=None,
+            P=camera_matrix,
         )
-
-        if input_dim == 1:
-            points_undistorted = points_undistorted[0]
-
-        return points_undistorted
-
-    @staticmethod
-    def _to_np_array(
-        points: CT.Points2DLike | CT.Points3DLike,
-    ) -> npt.NDArray[np.float64]:
-        """Convert a list, array, or record array of points into an unstructured array."""  # noqa: E501
-        if not len(points):
-            raise ValueError("points array is empty")
-
-        if hasattr(points, "dtype") and points.dtype.names is not None:
-            np_points = structured_to_unstructured(points, dtype=np.float64)  # type: ignore
-        else:
-            np_points = np.asarray(points, dtype=np.float64)
-
-        return np_points
+        return undistorted_2d.squeeze()

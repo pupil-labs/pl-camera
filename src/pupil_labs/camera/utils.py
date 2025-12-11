@@ -53,6 +53,8 @@ def to_np_point_array(
     if not len(points):
         return np.array([], dtype=np.float64).reshape((-1, n_coords))
 
+    points = np.array(points)
+
     if hasattr(points, "dtype") and points.dtype.names is not None:
         if n_coords > len(points.dtype.names):
             raise ValueError(
@@ -61,6 +63,8 @@ def to_np_point_array(
         np_points = structured_to_unstructured(points, dtype=np.float64)[:, :n_coords]  # type: ignore
     else:
         np_points = np.asarray(points, dtype=np.float64)
+        if np_points.ndim > 2:
+            np_points = np_points.squeeze()
         data_n_coords = (
             np_points.shape[0] if np_points.ndim == 1 else np_points.shape[1]
         )
