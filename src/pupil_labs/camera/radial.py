@@ -14,8 +14,8 @@ class CameraRadial:
         self,
         pixel_width: int,
         pixel_height: int,
-        camera_matrix: CT.CameraMatrix,
-        distortion_coefficients: CT.DistortionCoefficients | None = None,
+        camera_matrix: CT.CameraMatrixLike,
+        distortion_coefficients: CT.DistortionCoefficientsLike | None = None,
     ):
         self.pixel_width = pixel_width
         self.pixel_height = pixel_height
