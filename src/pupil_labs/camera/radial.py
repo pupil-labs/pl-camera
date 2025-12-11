@@ -134,14 +134,21 @@ class CameraRadial:
     def undistort_image(
         self, image: CT.Image, use_optimal_camera_matrix: bool = False
     ) -> CT.Image:
+        """Return an undistorted image
+
+        This implementation uses cv2.remap with a precomputed map, instead of
+        cv2.undistort. This is significantly faster when undistorting multiple images
+        because the undistortion maps are computed only once.
+
+        Args:
+            image: Image array
+            use_optimal_camera_matrix: use optimal camera matrix for unprojection
+
+        """
         if use_optimal_camera_matrix:
             map1, map2 = self._optimal_undistort_rectify_map
         else:
             map1, map2 = self._undistort_rectify_map
-
-        # This implementation uses cv2.remap with a precomputed map, instead of
-        # cv2.undistort. This is significantly faster when undistorting multiple images
-        # because the undistortion maps are computed only once.
         remapped: CT.Image = cv2.remap(
             image,
             map1,
