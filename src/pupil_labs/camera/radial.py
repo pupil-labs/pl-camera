@@ -104,24 +104,26 @@ class CameraRadial:
     def _optimal_undistort_rectify_map(
         self,
     ) -> tuple[CT.UndistortRectifyMap, CT.UndistortRectifyMap]:
-        return opencv_funcs.undistort_rectify_map(
+        return cv2.initUndistortRectifyMap(
             self.camera_matrix,
-            self.pixel_width,
-            self.pixel_height,
             self.distortion_coefficients,
+            None,
             self.optimal_camera_matrix,
+            (self.pixel_width, self.pixel_height),
+            cv2.CV_32FC1,
         )
 
     @cached_property
     def _undistort_rectify_map(
         self,
     ) -> tuple[CT.UndistortRectifyMap, CT.UndistortRectifyMap]:
-        return opencv_funcs.undistort_rectify_map(
+        return cv2.initUndistortRectifyMap(
             self.camera_matrix,
-            self.pixel_width,
-            self.pixel_height,
             self.distortion_coefficients,
+            None,
             self.camera_matrix,
+            (self.pixel_width, self.pixel_height),
+            cv2.CV_32FC1,
         )
 
     def undistort_image(

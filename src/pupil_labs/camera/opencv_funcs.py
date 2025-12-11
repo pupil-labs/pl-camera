@@ -63,21 +63,3 @@ def project_points_with_jacobian(
     distortion_coefficients: CT.DistortionCoefficients | None = None,
 ) -> tuple[CT.Points2D, np.ndarray]:
     return _project_points(points_3d, camera_matrix, distortion_coefficients)
-
-
-def undistort_rectify_map(
-    camera_matrix: CT.CameraMatrix,
-    width: int,
-    height: int,
-    distortion_coefficients: CT.DistortionCoefficients | None = None,
-    new_camera_matrix: CT.CameraMatrix | None = None,
-) -> tuple[CT.UndistortRectifyMap, CT.UndistortRectifyMap]:
-    map1, map2 = cv2.initUndistortRectifyMap(
-        camera_matrix,
-        distortion_coefficients,
-        None,
-        new_camera_matrix,
-        (width, height),
-        cv2.CV_32FC1,
-    )
-    return map1, map2
