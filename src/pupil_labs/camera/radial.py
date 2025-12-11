@@ -17,11 +17,13 @@ class CameraRadial:
         pixel_height: int,
         camera_matrix: CT.CameraMatrixLike,
         distortion_coefficients: CT.DistortionCoefficientsLike | None = None,
+        use_optimal_camera_matrix: bool = False,
     ):
         self.pixel_width = pixel_width
         self.pixel_height = pixel_height
         self.camera_matrix = camera_matrix
         self.distortion_coefficients = distortion_coefficients
+        self.use_optimal_camera_matrix = use_optimal_camera_matrix
 
     @property
     def pixel_width(self) -> int:
@@ -64,7 +66,9 @@ class CameraRadial:
     def distortion_coefficients(
         self, value: CT.DistortionCoefficientsLike | None
     ) -> None:
-        if value is not None:
+        if value is None:
+            self._distortion_coefficients = None
+        else:
             distortion_coefficients = np.asarray(value, dtype=np.float64)
             if distortion_coefficients.ndim != 1:
                 raise ValueError(
@@ -77,8 +81,14 @@ class CameraRadial:
                     f"distortion_coefficients should be None or have a size of {valid_lengths}"  # noqa: E501
                 )
             self._distortion_coefficients = distortion_coefficients
-        else:
-            self._distortion_coefficients = None
+
+    @property
+    def use_optimal_camera_matrix(self):
+        return self._use_optimal_camera_matrix
+
+    @use_optimal_camera_matrix.setter
+    def use_optimal_camera_matrix(self, value: bool):
+        self._use_optimal_camera_matrix = bool(value)
 
     @cached_property
     def optimal_camera_matrix(self) -> CT.CameraMatrix:
@@ -100,40 +110,33 @@ class CameraRadial:
         return np.array(optimal_camera_matrix, dtype=np.float64)
 
     @cached_property
-    def _optimal_undistort_rectify_map(
-        self,
-    ) -> tuple[CT.UndistortRectifyMap, CT.UndistortRectifyMap]:
-        return cast(
-            tuple[CT.UndistortRectifyMap, CT.UndistortRectifyMap],
-            cv2.initUndistortRectifyMap(
-                self.camera_matrix,
-                self.distortion_coefficients,
-                None,
-                self.optimal_camera_matrix,
-                (self.pixel_width, self.pixel_height),
-                cv2.CV_32FC1,
-            ),
-        )
-
-    @cached_property
     def _undistort_rectify_map(
         self,
     ) -> tuple[CT.UndistortRectifyMap, CT.UndistortRectifyMap]:
+        return self._make_undistort_rectify_map(self.camera_matrix)
+
+    @cached_property
+    def _optimal_undistort_rectify_map(
+        self,
+    ) -> tuple[CT.UndistortRectifyMap, CT.UndistortRectifyMap]:
+        return self._make_undistort_rectify_map(self.optimal_camera_matrix)
+
+    def _make_undistort_rectify_map(
+        self, camera_matrix: CT.CameraMatrixLike
+    ) -> tuple[CT.UndistortRectifyMap, CT.UndistortRectifyMap]:
         return cast(
             tuple[CT.UndistortRectifyMap, CT.UndistortRectifyMap],
             cv2.initUndistortRectifyMap(
                 self.camera_matrix,
                 self.distortion_coefficients,
                 None,
-                self.camera_matrix,
+                (camera_matrix),
                 (self.pixel_width, self.pixel_height),
                 cv2.CV_32FC1,
             ),
         )
 
-    def undistort_image(
-        self, image: CT.Image, use_optimal_camera_matrix: bool = False
-    ) -> CT.Image:
+    def undistort_image(self, image: CT.Image) -> CT.Image:
         """Return an undistorted image
 
         This implementation uses cv2.remap with a precomputed map, instead of
@@ -142,13 +145,9 @@ class CameraRadial:
 
         Args:
             image: Image array
-            use_optimal_camera_matrix: use optimal camera matrix for unprojection
 
         """
-        if use_optimal_camera_matrix:
-            map1, map2 = self._optimal_undistort_rectify_map
-        else:
-            map1, map2 = self._undistort_rectify_map
+        map1, map2 = self._undistort_rectify_map
         remapped: CT.Image = cv2.remap(
             image,
             map1,
@@ -159,10 +158,7 @@ class CameraRadial:
         return remapped
 
     def unproject_points(
-        self,
-        points_2d: CT.Points2DLike,
-        use_distortion: bool = True,
-        use_optimal_camera_matrix: bool = False,
+        self, points_2d: CT.Points2DLike, use_distortion: bool = True
     ) -> CT.Points3D:
         """Unprojects 2D image points to 3D space using the camera's intrinsics.
 
@@ -170,8 +166,6 @@ class CameraRadial:
             points_2d: Array-like of 2D point(s) to be unprojected.
             use_distortion: If True, applies distortion correction using the camera's
                 distortion coefficients. If False, ignores distortion correction.
-            use_optimal_camera_matrix: If True, uses the optimal camera matrix for
-                unprojection.
 
         """
         points_2d = to_np_point_array(points_2d, 2)
@@ -189,7 +183,7 @@ class CameraRadial:
             points_2d = points_2d[np.newaxis, :]
 
         camera_matrix = self.camera_matrix
-        if use_optimal_camera_matrix:
+        if self.use_optimal_camera_matrix:
             camera_matrix = self.optimal_camera_matrix
 
         distortion_coefficients = None
@@ -210,10 +204,7 @@ class CameraRadial:
         return points_3d.squeeze()
 
     def project_points(
-        self,
-        points_3d: CT.Points3DLike,
-        use_distortion: bool = True,
-        use_optimal_camera_matrix: bool = False,
+        self, points_3d: CT.Points3DLike, use_distortion: bool = True
     ) -> CT.Points2D:
         """Projects 3D points onto the 2D image plane using the camera's intrinsics.
 
@@ -221,8 +212,6 @@ class CameraRadial:
             points_3d: Array of 3D point(s) to be projected.
             use_distortion: If True, applies distortion using the camera's distortion
                 coefficients. If False, ignores distortion.
-            use_optimal_camera_matrix: If True, uses the optimal camera matrix for
-                projection instead of the regular camera matrix.
 
         """
         points_3d = to_np_point_array(points_3d, 3)
@@ -244,7 +233,7 @@ class CameraRadial:
             distortion_coefficients = self.distortion_coefficients
 
         camera_matrix = self.camera_matrix
-        if use_optimal_camera_matrix:
+        if self.use_optimal_camera_matrix:
             camera_matrix = self.optimal_camera_matrix
 
         rvec = tvec = np.zeros((1, 1, 3))
@@ -259,18 +248,11 @@ class CameraRadial:
 
         return np.array(projected).astype(np.float64).squeeze()
 
-    def undistort_points(
-        self,
-        points_2d: CT.Points2DLike,
-        use_optimal_camera_matrix: bool = False,
-    ) -> CT.Points2D:
+    def undistort_points(self, points_2d: CT.Points2DLike) -> CT.Points2D:
         """Undistorts 2D image points using the camera's intrinsics.
 
         Args:
             points_2d: Array-like of 2D point(s) to be undistorted.
-            use_optimal_camera_matrix: If True, uses the *regular* camera matrix for
-                unprojection, and the optimal camera matrix for reprojection. If False,
-                uses the regular camera matrix for both.
 
         """
         points_2d = to_np_point_array(points_2d, 2)
@@ -288,7 +270,7 @@ class CameraRadial:
             points_2d = points_2d[np.newaxis, :]
 
         camera_matrix = self.camera_matrix
-        if use_optimal_camera_matrix:
+        if self.use_optimal_camera_matrix:
             camera_matrix = self.optimal_camera_matrix
 
         undistorted_2d = cv2.undistortPoints(
