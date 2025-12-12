@@ -229,14 +229,6 @@ class CameraRadial:
         """
         points_2d = to_np_point_array(points_2d, 2)
 
-        if not (
-            (points_2d.ndim == 2 and points_2d.shape[1] == 2)
-            or (points_2d.ndim == 1 and points_2d.shape[0] == 2)
-        ):
-            raise ValueError(
-                f"points_2d should have shape `(N, 2)` or `(2,)`, got {points_2d.shape}"
-            )
-
         input_dim = points_2d.ndim
         if input_dim == 1:
             points_2d = points_2d[np.newaxis, :]
