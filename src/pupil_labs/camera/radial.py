@@ -269,3 +269,21 @@ class CameraRadial:
             P=camera_matrix,
         )
         return undistorted_2d.squeeze()
+
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__}("
+            + ", ".join(
+                f"{key}={getattr(self, key, '?')!r}".replace("array(", "").replace(
+                    ")", ""
+                )
+                for key in [
+                    "pixel_width",
+                    "pixel_height",
+                    "camera_matrix",
+                    "distortion_coefficients",
+                    "use_optimal_camera_matrix",
+                ]
+            )
+            + ")"
+        )
