@@ -22,56 +22,68 @@ def apply_distortion_model(
     return np.asarray([x_dist, y_dist])
 
 
-def to_np_point_array(
-    points: CT.Points2DLike | CT.Points3DLike,
-    n_coords: int = 2,
-) -> npt.NDArray[np.float64]:
-    """Convert a python, numpy or structured array of points into unstructured
+def to_np_point_array(coords: CT.Points2DLike, n_coords: int):
+    """Convert/validate python/numpy/structured array of coordinates into unstructured
+
+    Args:
+        coords: list of coordinates
+        n_coords: number of expected coordinates
+
+    Returns:
+        (np.ndarray, bool)
+        - The numpy array containing coordinates (always unstructured)
+        - A boolean indicating whether the argument was a single coordinate
 
     Examples:
-        >>> to_np_point_array([1, 10])
+        >>> to_np_point_array([1, 10], n_coords=2)
         array([[ 1., 10.]])
-        >>> to_np_point_array([(1, 10), (2, 20)])
+        >>> to_np_point_array([(1, 10), (2, 20)], n_coords=2)
         array([[ 1., 10.],
                [ 2., 20.]])
-        >>> to_np_point_array([(1, 10, 100), (2, 20, 200)])
+        >>> to_np_point_array([(1, 10, 100), (2, 20, 200)], n_coords=2)
         array([[ 1., 10.],
                [ 2., 20.]])
         >>> to_np_point_array([(1, 10, 100), (2, 20, 200)], n_coords=3)
         array([[  1.,  10., 100.],
                [  2.,  20., 200.]])
-        >>> to_np_point_array([1, 10])
+        >>> to_np_point_array([1, 10], n_coords=2)
         array([[ 1., 10.]])
         >>> to_np_point_array(
-        ...     np.array([(1, 10), (2, 20)],
-        ...     dtype=[("x", np.int32), ("y", np.int32)])
+        ...     np.array([(1, 10), (2, 20)], dtype=[("x", np.int32), ("y", np.int32)]),
+        ...     n_coords=2
         ... )
         array([[ 1., 10.],
                [ 2., 20.]])
 
     """
-    if not len(points):
-        return np.array([], dtype=np.float64).reshape((-1, n_coords))
+    arr = np.array(coords)
 
-    points = np.array(points)
+    if arr.dtype.names is not None:
+        try:
+            arr = structured_to_unstructured(arr)
+        except Exception as e:
+            raise ValueError(f"Failed to convert structured array: {e}") from e
 
-    if hasattr(points, "dtype") and points.dtype.names is not None:
-        if n_coords > len(points.dtype.names):
+    # is_single_coord = arr.ndim == 1
+    arr = np.asarray(arr).astype(np.float64)
+    arr = np.squeeze(arr)
+
+    if arr.ndim == 1:
+        if len(arr) != n_coords:
             raise ValueError(
-                f"can not convert {len(points.dtype.names)}D points to {n_coords}D"
+                f"Expected {n_coords} coordinate values but got {len(arr)}."
             )
-        np_points = structured_to_unstructured(points, dtype=np.float64)[:, :n_coords]  # type: ignore
-    else:
-        np_points = np.asarray(points, dtype=np.float64)
-        if np_points.ndim > 2:
-            np_points = np_points.squeeze()
-        data_n_coords = (
-            np_points.shape[0] if np_points.ndim == 1 else np_points.shape[1]
-        )
-        if n_coords > data_n_coords:
-            raise ValueError(f"can not convert {data_n_coords}D points to {n_coords}D")
-        if np_points.ndim == 1:
-            np_points = np_points.reshape((-1, len(np_points)))
-        np_points = np_points[:, :n_coords]
+        return arr
 
-    return np_points
+    elif arr.ndim == 2:
+        if arr.shape[1] != n_coords:
+            raise ValueError(
+                f"Expected {n_coords} coordinate values but array shape is {arr.shape}."
+            )
+        return arr
+
+    else:
+        raise ValueError(
+            f"Invalid coordinate shape after squeezing: {arr.shape}. "
+            f"Expected shape ({n_coords},) or (N, {n_coords})."
+        )

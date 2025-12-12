@@ -170,18 +170,6 @@ class CameraRadial:
         """
         points_2d = to_np_point_array(points_2d, 2)
 
-        if not (
-            (points_2d.ndim == 2 and points_2d.shape[1] == 2)
-            or (points_2d.ndim == 1 and points_2d.shape[0] == 2)
-        ):
-            raise ValueError(
-                f"points_2d should have shape `(N, 2)` or `(2,)`, got {points_2d.shape}"
-            )
-
-        input_dim = points_2d.ndim
-        if input_dim == 1:
-            points_2d = points_2d[np.newaxis, :]
-
         camera_matrix = self.camera_matrix
         if self.use_optimal_camera_matrix:
             camera_matrix = self.optimal_camera_matrix
@@ -197,10 +185,6 @@ class CameraRadial:
         )
         points_3d = cv2.convertPointsToHomogeneous(np.array(points_3d))
 
-        # Remove unnecessary dimension if input was a single point
-        if input_dim == 1:
-            points_3d = points_3d[0]
-
         return points_3d.squeeze()
 
     def project_points(
@@ -215,18 +199,6 @@ class CameraRadial:
 
         """
         points_3d = to_np_point_array(points_3d, 3)
-
-        if not (
-            (points_3d.ndim == 2 and points_3d.shape[1] == 3)
-            or (points_3d.ndim == 1 and points_3d.shape[0] == 3)
-        ):
-            raise ValueError(
-                f"points_3d should have shape `(N, 3)` or `(3,)`, got {points_3d.shape}"
-            )
-
-        input_dim = points_3d.ndim
-        if input_dim == 1:
-            points_3d = points_3d[np.newaxis, :]
 
         distortion_coefficients = None
         if use_distortion:
