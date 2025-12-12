@@ -6,6 +6,6 @@ from importlib.metadata import PackageNotFoundError, version
 with contextlib.suppress(PackageNotFoundError):
     __version__ = version("pupil_labs.camera")
 
-from .radial import CameraRadial
+from .radial import Camera
 
-__all__ = ["CameraRadial", "__version__"]
+__all__ = ["Camera", "__version__"]

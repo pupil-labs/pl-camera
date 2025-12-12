@@ -8,7 +8,9 @@
 [![pypi version](https://img.shields.io/pypi/v/pupil-labs-camera.svg)](https://pypi.org/project/pupil-labs-camera/)
 [![python version](https://img.shields.io/pypi/pyversions/pupil-labs-camera)](https://pypi.org/project/pupil-labs-camera/)
 
-Utilities for handling cameras.
+This repo contains functionality around the usage of camera intrinsics for undistorting data, and projecting and unprojecting points.
+
+It is mostly a wrapper around OpenCV's functionality, providing type hints, input validation, a more intuitive interface, and some changes to improve computational performance.
 
 ## Installation
 
