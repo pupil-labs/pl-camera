@@ -159,24 +159,32 @@ class CameraRadial:
         )
         return remapped
 
-    def _parse_use_optimal_camera_matrix(self, use_optimal_camera_matrix: bool | None):
+    def _parse_use_optimal_camera_matrix(
+        self, use_optimal_camera_matrix: bool | None
+    ) -> bool:
         if use_optimal_camera_matrix is None:
             return self.use_optimal_camera_matrix
-        return use_optimal_camera_matrix
+        return bool(use_optimal_camera_matrix)
 
-    def _get_undistort_rectify_map(self, use_optimal_camera_matrix: bool | None):
+    def _get_undistort_rectify_map(
+        self, use_optimal_camera_matrix: bool | None
+    ) -> tuple[CT.UndistortRectifyMap, CT.UndistortRectifyMap]:
         if self._parse_use_optimal_camera_matrix(use_optimal_camera_matrix):
             return self._optimal_undistort_rectify_map
         return self._undistort_rectify_map
 
-    def _get_unprojection_camera_matrix(self, use_optimal_camera_matrix: bool | None):
+    def _get_unprojection_camera_matrix(
+        self, use_optimal_camera_matrix: bool | None
+    ) -> CT.CameraMatrix:
         return (
             self.optimal_camera_matrix
             if self._parse_use_optimal_camera_matrix(use_optimal_camera_matrix)
             else self.camera_matrix
         )
 
-    def _get_distortion_coefficients(self, use_distortion: bool):
+    def _get_distortion_coefficients(
+        self, use_distortion: bool
+    ) -> CT.DistortionCoefficients | None:
         return self.distortion_coefficients if use_distortion else None
 
     def unproject_points(
