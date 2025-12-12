@@ -1098,7 +1098,7 @@ captured distorted image.</p>
 
 
 <a href="#pupil_labs.camera.CameraRadial.project_points" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">project_points</span><span class="p">(</span><span class="n">points_3d</span><span class="p">:</span> <span class="n"><span title="pupil_labs.camera.custom_types.Points3DLike">Points3DLike</span></span><span class="p">,</span> <span class="n">use_distortion</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="pupil_labs.camera.custom_types.Points2D">Points2D</span></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">project_points</span><span class="p">(</span><span class="n">points_3d</span><span class="p">:</span> <span class="n"><span title="pupil_labs.camera.custom_types.Points3DLike">Points3DLike</span></span><span class="p">,</span> <span class="n">use_distortion</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="pupil_labs.camera.custom_types.Points2D">Points2D</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1127,32 +1127,22 @@ captured distorted image.</p>
 coefficients. If False, ignores distortion.</p>
           </div>
         </li>
+        <li class="doc-section-item field-body">
+            <b><code>use_optimal_camera_matrix</code></b>
+              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a> | None</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>If True applies optimal camera matrix</p>
+          </div>
+        </li>
     </ul>
 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">190</span>
-<span class="normal">191</span>
-<span class="normal">192</span>
-<span class="normal">193</span>
-<span class="normal">194</span>
-<span class="normal">195</span>
-<span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span>
-<span class="normal">199</span>
-<span class="normal">200</span>
-<span class="normal">201</span>
-<span class="normal">202</span>
-<span class="normal">203</span>
-<span class="normal">204</span>
-<span class="normal">205</span>
-<span class="normal">206</span>
-<span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">210</span>
 <span class="normal">211</span>
 <span class="normal">212</span>
 <span class="normal">213</span>
@@ -1163,8 +1153,29 @@ coefficients. If False, ignores distortion.</p>
 <span class="normal">218</span>
 <span class="normal">219</span>
 <span class="normal">220</span>
-<span class="normal">221</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">project_points</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">points_3d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points3DLike</span><span class="p">,</span> <span class="n">use_distortion</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">project_points</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">points_3d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points3DLike</span><span class="p">,</span>
+    <span class="n">use_distortion</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2D</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Projects 3D points onto the 2D image plane using the camera&#39;s intrinsics.</span>
 
@@ -1172,17 +1183,12 @@ coefficients. If False, ignores distortion.</p>
 <span class="sd">        points_3d: Array of 3D point(s) to be projected.</span>
 <span class="sd">        use_distortion: If True, applies distortion using the camera&#39;s distortion</span>
 <span class="sd">            coefficients. If False, ignores distortion.</span>
+<span class="sd">        use_optimal_camera_matrix: If True applies optimal camera matrix</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">points_3d</span> <span class="o">=</span> <span class="n">to_np_point_array</span><span class="p">(</span><span class="n">points_3d</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-
-    <span class="n">distortion_coefficients</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">if</span> <span class="n">use_distortion</span><span class="p">:</span>
-        <span class="n">distortion_coefficients</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distortion_coefficients</span>
-
-    <span class="n">camera_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera_matrix</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_optimal_camera_matrix</span><span class="p">:</span>
-        <span class="n">camera_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimal_camera_matrix</span>
+    <span class="n">distortion_coefficients</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_distortion_coefficients</span><span class="p">(</span><span class="n">use_distortion</span><span class="p">)</span>
+    <span class="n">camera_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_unprojection_camera_matrix</span><span class="p">(</span><span class="n">use_optimal_camera_matrix</span><span class="p">)</span>
 
     <span class="n">rvec</span> <span class="o">=</span> <span class="n">tvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 
@@ -1209,7 +1215,7 @@ coefficients. If False, ignores distortion.</p>
 
 
 <a href="#pupil_labs.camera.CameraRadial.undistort_image" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">undistort_image</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n"><span title="pupil_labs.camera.custom_types.Image">Image</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="pupil_labs.camera.custom_types.Image">Image</span></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">undistort_image</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n"><span title="pupil_labs.camera.custom_types.Image">Image</span></span><span class="p">,</span> <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="pupil_labs.camera.custom_types.Image">Image</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1230,12 +1236,30 @@ because the undistortion maps are computed only once.</p>
             <p>Image array</p>
           </div>
         </li>
+        <li class="doc-section-item field-body">
+            <b><code>use_optimal_camera_matrix</code></b>
+              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a> | None</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>If True applies optimal camera matrix</p>
+          </div>
+        </li>
     </ul>
 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">139</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
 <span class="normal">140</span>
 <span class="normal">141</span>
 <span class="normal">142</span>
@@ -1254,7 +1278,13 @@ because the undistortion maps are computed only once.</p>
 <span class="normal">155</span>
 <span class="normal">156</span>
 <span class="normal">157</span>
-<span class="normal">158</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Image</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CT</span><span class="o">.</span><span class="n">Image</span><span class="p">:</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_image</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">image</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Image</span><span class="p">,</span>
+    <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CT</span><span class="o">.</span><span class="n">Image</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return an undistorted image</span>
 
 <span class="sd">    This implementation uses cv2.remap with a precomputed map, instead of</span>
@@ -1263,9 +1293,15 @@ because the undistortion maps are computed only once.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        image: Image array</span>
+<span class="sd">        use_optimal_camera_matrix: If True applies optimal camera matrix</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">map1</span><span class="p">,</span> <span class="n">map2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_undistort_rectify_map</span>
+    <span class="n">map1</span><span class="p">,</span> <span class="n">map2</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_undistort_rectify_map</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_use_optimal_camera_matrix</span><span class="p">(</span><span class="n">use_optimal_camera_matrix</span><span class="p">)</span>
+        <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_undistort_rectify_map</span>
+    <span class="p">)</span>
+
     <span class="n">remapped</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">remap</span><span class="p">(</span>
         <span class="n">image</span><span class="p">,</span>
         <span class="n">map1</span><span class="p">,</span>
@@ -1288,7 +1324,7 @@ because the undistortion maps are computed only once.</p>
 
 
 <a href="#pupil_labs.camera.CameraRadial.undistort_points" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">undistort_points</span><span class="p">(</span><span class="n">points_2d</span><span class="p">:</span> <span class="n"><span title="pupil_labs.camera.custom_types.Points2DLike">Points2DLike</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="pupil_labs.camera.custom_types.Points2D">Points2D</span></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">undistort_points</span><span class="p">(</span><span class="n">points_2d</span><span class="p">:</span> <span class="n"><span title="pupil_labs.camera.custom_types.Points2DLike">Points2DLike</span></span><span class="p">,</span> <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="pupil_labs.camera.custom_types.Points2D">Points2D</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1306,43 +1342,57 @@ because the undistortion maps are computed only once.</p>
             <p>Array-like of 2D point(s) to be undistorted.</p>
           </div>
         </li>
+        <li class="doc-section-item field-body">
+            <b><code>use_optimal_camera_matrix</code></b>
+              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a> | None</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>If True applies optimal camera matrix</p>
+          </div>
+        </li>
     </ul>
 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">223</span>
-<span class="normal">224</span>
-<span class="normal">225</span>
-<span class="normal">226</span>
-<span class="normal">227</span>
-<span class="normal">228</span>
-<span class="normal">229</span>
-<span class="normal">230</span>
-<span class="normal">231</span>
-<span class="normal">232</span>
-<span class="normal">233</span>
-<span class="normal">234</span>
-<span class="normal">235</span>
-<span class="normal">236</span>
-<span class="normal">237</span>
-<span class="normal">238</span>
-<span class="normal">239</span>
-<span class="normal">240</span>
-<span class="normal">241</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">241</span>
 <span class="normal">242</span>
-<span class="normal">243</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points_2d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2D</span><span class="p">:</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_points</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">points_2d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">,</span>
+    <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2D</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Undistorts 2D image points using the camera&#39;s intrinsics.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        points_2d: Array-like of 2D point(s) to be undistorted.</span>
+<span class="sd">        use_optimal_camera_matrix: If True applies optimal camera matrix</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">points_2d</span> <span class="o">=</span> <span class="n">to_np_point_array</span><span class="p">(</span><span class="n">points_2d</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-
-    <span class="n">camera_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera_matrix</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_optimal_camera_matrix</span><span class="p">:</span>
-        <span class="n">camera_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimal_camera_matrix</span>
+    <span class="n">camera_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_unprojection_camera_matrix</span><span class="p">(</span><span class="n">use_optimal_camera_matrix</span><span class="p">)</span>
 
     <span class="n">undistorted_2d</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">undistortPoints</span><span class="p">(</span>
         <span class="n">src</span><span class="o">=</span><span class="n">points_2d</span><span class="p">,</span>
@@ -1366,7 +1416,7 @@ because the undistortion maps are computed only once.</p>
 
 
 <a href="#pupil_labs.camera.CameraRadial.unproject_points" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">unproject_points</span><span class="p">(</span><span class="n">points_2d</span><span class="p">:</span> <span class="n"><span title="pupil_labs.camera.custom_types.Points2DLike">Points2DLike</span></span><span class="p">,</span> <span class="n">use_distortion</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="pupil_labs.camera.custom_types.Points3D">Points3D</span></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">unproject_points</span><span class="p">(</span><span class="n">points_2d</span><span class="p">:</span> <span class="n"><span title="pupil_labs.camera.custom_types.Points2DLike">Points2DLike</span></span><span class="p">,</span> <span class="n">use_distortion</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="pupil_labs.camera.custom_types.Points3D">Points3D</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1395,41 +1445,52 @@ because the undistortion maps are computed only once.</p>
 distortion coefficients. If False, ignores distortion correction.</p>
           </div>
         </li>
+        <li class="doc-section-item field-body">
+            <b><code>use_optimal_camera_matrix</code></b>
+              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a> | None</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>If True applies optimal camera matrix</p>
+          </div>
+        </li>
     </ul>
 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">160</span>
-<span class="normal">161</span>
-<span class="normal">162</span>
-<span class="normal">163</span>
-<span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span>
-<span class="normal">170</span>
-<span class="normal">171</span>
-<span class="normal">172</span>
-<span class="normal">173</span>
-<span class="normal">174</span>
-<span class="normal">175</span>
-<span class="normal">176</span>
-<span class="normal">177</span>
-<span class="normal">178</span>
-<span class="normal">179</span>
-<span class="normal">180</span>
-<span class="normal">181</span>
-<span class="normal">182</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">182</span>
 <span class="normal">183</span>
 <span class="normal">184</span>
 <span class="normal">185</span>
 <span class="normal">186</span>
 <span class="normal">187</span>
-<span class="normal">188</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unproject_points</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">points_2d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">,</span> <span class="n">use_distortion</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unproject_points</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">points_2d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">,</span>
+    <span class="n">use_distortion</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points3D</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Unprojects 2D image points to 3D space using the camera&#39;s intrinsics.</span>
 
@@ -1437,17 +1498,12 @@ distortion coefficients. If False, ignores distortion correction.</p>
 <span class="sd">        points_2d: Array-like of 2D point(s) to be unprojected.</span>
 <span class="sd">        use_distortion: If True, applies distortion correction using the camera&#39;s</span>
 <span class="sd">            distortion coefficients. If False, ignores distortion correction.</span>
+<span class="sd">        use_optimal_camera_matrix: If True applies optimal camera matrix</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">points_2d</span> <span class="o">=</span> <span class="n">to_np_point_array</span><span class="p">(</span><span class="n">points_2d</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-
-    <span class="n">camera_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera_matrix</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_optimal_camera_matrix</span><span class="p">:</span>
-        <span class="n">camera_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimal_camera_matrix</span>
-
-    <span class="n">distortion_coefficients</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">if</span> <span class="n">use_distortion</span><span class="p">:</span>
-        <span class="n">distortion_coefficients</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distortion_coefficients</span>
+    <span class="n">distortion_coefficients</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_distortion_coefficients</span><span class="p">(</span><span class="n">use_distortion</span><span class="p">)</span>
+    <span class="n">camera_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_unprojection_camera_matrix</span><span class="p">(</span><span class="n">use_optimal_camera_matrix</span><span class="p">)</span>
 
     <span class="n">points_3d</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">undistortPoints</span><span class="p">(</span>
         <span class="n">src</span><span class="o">=</span><span class="n">points_2d</span><span class="p">,</span>
