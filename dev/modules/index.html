@@ -1331,11 +1331,7 @@ because the undistortion maps are computed only once.</p>
 <span class="normal">240</span>
 <span class="normal">241</span>
 <span class="normal">242</span>
-<span class="normal">243</span>
-<span class="normal">244</span>
-<span class="normal">245</span>
-<span class="normal">246</span>
-<span class="normal">247</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points_2d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2D</span><span class="p">:</span>
+<span class="normal">243</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points_2d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2D</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Undistorts 2D image points using the camera&#39;s intrinsics.</span>
 
 <span class="sd">    Args:</span>
@@ -1343,10 +1339,6 @@ because the undistortion maps are computed only once.</p>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">points_2d</span> <span class="o">=</span> <span class="n">to_np_point_array</span><span class="p">(</span><span class="n">points_2d</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-
-    <span class="n">input_dim</span> <span class="o">=</span> <span class="n">points_2d</span><span class="o">.</span><span class="n">ndim</span>
-    <span class="k">if</span> <span class="n">input_dim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">points_2d</span> <span class="o">=</span> <span class="n">points_2d</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span>
 
     <span class="n">camera_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera_matrix</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_optimal_camera_matrix</span><span class="p">:</span>
