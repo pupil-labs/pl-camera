@@ -240,6 +240,8 @@ def test_valid_distortion_coefficients(
     camera_radial.distortion_coefficients = distortion_coefficients
 
 
+# NOTE(dan): this test is disabled because unproject/project is not completely accurate
+# using opencv funcs, when a suitable perfomant replacement is found it can be enabled
 # def test_unprojection_and_reprojection(camera_radial: CameraRadial):
 #     original = [
 #         (0, 0),
