@@ -8,8 +8,6 @@ from pupil_labs.camera import custom_types as CT
 
 @pytest.fixture
 def camera_radial():
-    image_width = 1600
-    image_height = 1200
     camera_matrix = [
         [891.61897098, 0.0, 816.30726443],
         [0.0, 890.94104777, 614.49661859],
@@ -25,7 +23,7 @@ def camera_radial():
         0.05234352,
         0.02383326,
     ]
-    return Camera(image_width, image_height, camera_matrix, distortion_coefficients)
+    return Camera(camera_matrix, distortion_coefficients)
 
 
 @pytest.mark.parametrize(
@@ -158,22 +156,6 @@ def test_undistort_points(camera_radial: Camera):
     assert_almost_equal(undistorted, expected, decimal=4)
 
 
-@pytest.mark.parametrize("width", [-1, 0])
-def test_invalid_width(camera_radial: Camera, width: int):
-    with pytest.raises(ValueError):
-        Camera(width, 1000, [[1, 2, 3], [1, 2, 3], [1, 2, 3]], [1, 2, 3, 4])
-    with pytest.raises(ValueError):
-        camera_radial.pixel_width = width
-
-
-@pytest.mark.parametrize("height", [-1, 0])
-def test_invalid_height(camera_radial: Camera, height: int):
-    with pytest.raises(ValueError):
-        Camera(1000, height, [[1, 2, 3], [1, 2, 3], [1, 2, 3]], [1, 2, 3, 4])
-    with pytest.raises(ValueError):
-        camera_radial.pixel_height = height
-
-
 @pytest.mark.parametrize(
     "camera_matrix",
     [
@@ -187,7 +169,7 @@ def test_invalid_camera_matrix(
     camera_radial: Camera, camera_matrix: CT.CameraMatrixLike
 ):
     with pytest.raises(ValueError):
-        Camera(1000, 1000, camera_matrix, [1, 2, 3, 4])
+        Camera(camera_matrix, [1, 2, 3, 4])
     with pytest.raises(ValueError):
         camera_radial.camera_matrix = camera_matrix
 
@@ -213,7 +195,7 @@ def test_invalid_distortion_coefficients(
     camera_radial: Camera, distortion_coefficients: CT.DistortionCoefficientsLike
 ):
     with pytest.raises(ValueError):
-        Camera(1000, 1000, [[1, 2, 3], [1, 2, 3], [1, 2, 3]], distortion_coefficients)
+        Camera([[1, 2, 3], [1, 2, 3], [1, 2, 3]], distortion_coefficients)
     with pytest.raises(ValueError):
         camera_radial.distortion_coefficients = distortion_coefficients
 
@@ -232,7 +214,7 @@ def test_invalid_distortion_coefficients(
 def test_valid_distortion_coefficients(
     camera_radial: Camera, distortion_coefficients: CT.DistortionCoefficientsLike
 ):
-    Camera(1000, 1000, [[1, 2, 3], [1, 2, 3], [1, 2, 3]], distortion_coefficients)
+    Camera([[1, 2, 3], [1, 2, 3], [1, 2, 3]], distortion_coefficients)
     camera_radial.distortion_coefficients = distortion_coefficients
 
 

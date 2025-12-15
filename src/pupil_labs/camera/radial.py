@@ -13,14 +13,10 @@ class Camera:
 
     def __init__(
         self,
-        pixel_width: int,
-        pixel_height: int,
         camera_matrix: CT.CameraMatrixLike,
         distortion_coefficients: CT.DistortionCoefficientsLike | None = None,
         use_optimal_camera_matrix: bool = False,
     ):
-        self.pixel_width = pixel_width
-        self.pixel_height = pixel_height
         self.camera_matrix = camera_matrix
         self.distortion_coefficients = distortion_coefficients
         self.use_optimal_camera_matrix = use_optimal_camera_matrix
