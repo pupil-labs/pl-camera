@@ -92,8 +92,8 @@ class Camera:
         captured distorted image.
         """
         optimal_camera_matrix, _ = cv2.getOptimalNewCameraMatrix(
-            cameraMatrix=np.asarray(self.camera_matrix),
-            distCoeffs=np.asarray(self.distortion_coefficients),
+            cameraMatrix=self.camera_matrix,
+            distCoeffs=self.distortion_coefficients,
             imageSize=(self.pixel_width, self.pixel_height),
             newImgSize=(self.pixel_width, self.pixel_height),
             alpha=0,

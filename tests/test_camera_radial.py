@@ -5,27 +5,63 @@ from numpy.testing import assert_almost_equal
 from pupil_labs.camera import Camera
 from pupil_labs.camera import custom_types as CT
 
+CAMERA_MATRIX = [
+    [891.61897098, 0.0, 816.30726443],
+    [0.0, 890.94104777, 614.49661859],
+    [0.0, 0.0, 1.0],
+]
+DISTORTION_COEFFICIENTS = [
+    -0.13057592,
+    0.10888688,
+    0.00038934,
+    -0.00046976,
+    -0.00072779,
+    0.17010936,
+    0.05234352,
+    0.02383326,
+]
+
 
 @pytest.fixture
 def camera_radial():
     image_width = 1600
     image_height = 1200
-    camera_matrix = [
-        [891.61897098, 0.0, 816.30726443],
-        [0.0, 890.94104777, 614.49661859],
-        [0.0, 0.0, 1.0],
-    ]
-    distortion_coefficients = [
-        -0.13057592,
-        0.10888688,
-        0.00038934,
-        -0.00046976,
-        -0.00072779,
-        0.17010936,
-        0.05234352,
-        0.02383326,
-    ]
+    camera_matrix = CAMERA_MATRIX
+    distortion_coefficients = DISTORTION_COEFFICIENTS
     return Camera(image_width, image_height, camera_matrix, distortion_coefficients)
+
+
+@pytest.mark.parametrize(
+    "distortion_coefficients",
+    [
+        None,
+        DISTORTION_COEFFICIENTS,
+    ],
+)
+@pytest.mark.parametrize("use_distortion", [True, False])
+@pytest.mark.parametrize("use_optimal_camera_matrix", [True, False])
+def test_various_configurations(
+    distortion_coefficients, use_optimal_camera_matrix, use_distortion
+):
+    camera = Camera(1600, 1200, CAMERA_MATRIX, distortion_coefficients)
+    camera.unproject_points(
+        (200.0, 200.0),
+        use_optimal_camera_matrix=use_optimal_camera_matrix,
+        use_distortion=use_distortion,
+    )
+    camera.undistort_image(
+        np.zeros((1600, 1200)),
+        use_optimal_camera_matrix=use_optimal_camera_matrix,
+    )
+    camera.undistort_points(
+        (200.0, 200.0),
+        use_optimal_camera_matrix=use_optimal_camera_matrix,
+    )
+    camera.project_points(
+        (0.5, 0.5, 1),
+        use_optimal_camera_matrix=use_optimal_camera_matrix,
+        use_distortion=use_distortion,
+    )
 
 
 @pytest.mark.parametrize(
