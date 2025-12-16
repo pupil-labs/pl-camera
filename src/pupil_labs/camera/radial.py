@@ -270,6 +270,25 @@ class Camera:
         )
         return undistorted_2d.squeeze()
 
+    def distort_points(
+        self,
+        points_2d: CT.Points2DLike,
+        use_optimal_camera_matrix: bool | None = None,
+    ) -> CT.Points2D:
+        """Distorts 2D image points using the camera's intrinsics.
+
+        Args:
+            points_2d: Array-like of 2D point(s) to be distorted.
+            use_optimal_camera_matrix: If True applies optimal camera matrix
+        """
+        points_3d = self.unproject_points(
+            points_2d, use_distortion=False, use_optimal_camera_matrix=use_optimal_camera_matrix
+        )
+        distorted_points = self.project_points(
+            points_3d, use_distortion=True, use_optimal_camera_matrix=use_optimal_camera_matrix
+        )
+        return distorted_points
+
     def __repr__(self) -> str:
         return (
             f"{self.__class__.__name__}("
