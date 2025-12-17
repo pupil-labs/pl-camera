@@ -1175,7 +1175,10 @@ coefficients. If False, ignores distortion.</p>
 <span class="normal">250</span>
 <span class="normal">251</span>
 <span class="normal">252</span>
-<span class="normal">253</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">project_points</span><span class="p">(</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">project_points</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">points_3d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points3DLike</span><span class="p">,</span>
     <span class="n">use_distortion</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -1196,19 +1199,22 @@ coefficients. If False, ignores distortion.</p>
 
     <span class="n">rvec</span> <span class="o">=</span> <span class="n">tvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 
-    <span class="n">projected</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">projectPoints</span><span class="p">(</span>
-        <span class="n">objectPoints</span><span class="o">=</span><span class="n">np_points_3d</span><span class="p">,</span>
-        <span class="n">rvec</span><span class="o">=</span><span class="n">rvec</span><span class="p">,</span>
-        <span class="n">tvec</span><span class="o">=</span><span class="n">tvec</span><span class="p">,</span>
-        <span class="n">cameraMatrix</span><span class="o">=</span><span class="n">camera_matrix</span><span class="p">,</span>
-        <span class="n">distCoeffs</span><span class="o">=</span><span class="n">distortion_coefficients</span><span class="p">,</span>
+    <span class="n">projected_2d</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+        <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">projectPoints</span><span class="p">(</span>
+            <span class="n">objectPoints</span><span class="o">=</span><span class="n">np_points_3d</span><span class="p">,</span>
+            <span class="n">rvec</span><span class="o">=</span><span class="n">rvec</span><span class="p">,</span>
+            <span class="n">tvec</span><span class="o">=</span><span class="n">tvec</span><span class="p">,</span>
+            <span class="n">cameraMatrix</span><span class="o">=</span><span class="n">camera_matrix</span><span class="p">,</span>
+            <span class="n">distCoeffs</span><span class="o">=</span><span class="n">distortion_coefficients</span><span class="p">,</span>
+        <span class="p">),</span>
     <span class="p">)</span>
-    <span class="n">projected</span> <span class="o">=</span> <span class="n">projected</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
-    <span class="n">projected</span> <span class="o">=</span> <span class="n">projected</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">projected_2d</span> <span class="o">=</span> <span class="n">projected_2d</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">projected_2d</span> <span class="o">=</span> <span class="n">projected_2d</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">np_points_3d</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">projected</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">CT</span><span class="o">.</span><span class="n">Points2D</span><span class="p">,</span> <span class="n">projected_2d</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-    <span class="k">return</span> <span class="n">projected</span>
+    <span class="k">return</span> <span class="n">projected_2d</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1365,10 +1371,7 @@ because the undistortion maps are computed only once.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">255</span>
-<span class="normal">256</span>
-<span class="normal">257</span>
-<span class="normal">258</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">258</span>
 <span class="normal">259</span>
 <span class="normal">260</span>
 <span class="normal">261</span>
@@ -1390,7 +1393,10 @@ because the undistortion maps are computed only once.</p>
 <span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
-<span class="normal">280</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_points</span><span class="p">(</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_points</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">points_2d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">,</span>
     <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1413,7 +1419,7 @@ because the undistortion maps are computed only once.</p>
         <span class="n">P</span><span class="o">=</span><span class="n">camera_matrix</span><span class="p">,</span>
     <span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">np_points_2d</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">undistorted_2d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">CT</span><span class="o">.</span><span class="n">Points2D</span><span class="p">,</span> <span class="n">undistorted_2d</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="k">return</span> <span class="n">undistorted_2d</span>
 </code></pre></div></td></tr></table></div>
@@ -1521,16 +1527,16 @@ distortion coefficients. If False, ignores distortion correction.</p>
     <span class="n">distortion_coefficients</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_distortion_coefficients</span><span class="p">(</span><span class="n">use_distortion</span><span class="p">)</span>
     <span class="n">camera_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_unprojection_camera_matrix</span><span class="p">(</span><span class="n">use_optimal_camera_matrix</span><span class="p">)</span>
 
-    <span class="n">points_3d</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">undistortPoints</span><span class="p">(</span>
+    <span class="n">projected_3d</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">undistortPoints</span><span class="p">(</span>
         <span class="n">src</span><span class="o">=</span><span class="n">np_points_2d</span><span class="p">,</span>
         <span class="n">cameraMatrix</span><span class="o">=</span><span class="n">camera_matrix</span><span class="p">,</span>
         <span class="n">distCoeffs</span><span class="o">=</span><span class="n">distortion_coefficients</span><span class="p">,</span>
     <span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span>
-    <span class="n">points_3d</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">convertPointsToHomogeneous</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">points_3d</span><span class="p">))[:,</span> <span class="mi">0</span><span class="p">]</span>
-    <span class="n">points_3d</span> <span class="o">=</span> <span class="n">points_3d</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">projected_3d</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">convertPointsToHomogeneous</span><span class="p">(</span><span class="n">projected_3d</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">projected_3d</span> <span class="o">=</span> <span class="n">projected_3d</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">np_points_2d</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">points_3d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">points_3d</span>
+        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">CT</span><span class="o">.</span><span class="n">Points3D</span><span class="p">,</span> <span class="n">projected_3d</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">projected_3d</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
