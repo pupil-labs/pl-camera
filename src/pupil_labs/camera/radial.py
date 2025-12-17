@@ -108,10 +108,22 @@ class Camera:
         return self._make_undistort_rectify_map(self.camera_matrix)
 
     @cached_property
+    def _distort_rectify_map(
+        self,
+    ) -> tuple[CT.DistortRectifyMap, CT.DistortRectifyMap]:
+        return self._make_distort_rectify_map(self.camera_matrix)
+
+    @cached_property
     def _optimal_undistort_rectify_map(
         self,
     ) -> tuple[CT.UndistortRectifyMap, CT.UndistortRectifyMap]:
         return self._make_undistort_rectify_map(self.optimal_camera_matrix)
+
+    @cached_property
+    def _optimal_distort_rectify_map(
+        self,
+    ) -> tuple[CT.DistortRectifyMap, CT.DistortRectifyMap]:
+        return self._make_distort_rectify_map(self.optimal_camera_matrix)
 
     def _make_undistort_rectify_map(
         self, camera_matrix: CT.CameraMatrixLike
@@ -126,6 +138,35 @@ class Camera:
                 (self.pixel_width, self.pixel_height),
                 cv2.CV_32FC1,
             ),
+        )
+
+    def _make_distort_rectify_map(
+        self, camera_matrix: CT.CameraMatrixLike
+    ) -> tuple[CT.DistortRectifyMap, CT.DistortRectifyMap]:
+        w_dst, h_dst = self.pixel_width, self.pixel_height
+
+        # create grid of pixel coordinates in the distorted image
+        xs = np.arange(w_dst)
+        ys = np.arange(h_dst)
+        xv, yv = np.meshgrid(xs, ys)
+        pix = np.stack((xv, yv), axis=-1).astype(np.float32)  # (h_dst, w_dst, 2)
+
+        # Convert pixel coords (u_d, v_d) in distorted image to normalized camera
+        # coords x_d = K^{-1} * [u;v;1]
+        K = np.asarray(camera_matrix, dtype=np.float64)
+        pts = pix.reshape(-1, 1, 2).astype(np.float64)
+
+        undistorted_pts = cv2.undistortPoints(
+            pts, K, self.distortion_coefficients, R=None, P=camera_matrix
+        )  # returns (N,1,2) in pixel coords of undistorted image when P provided
+
+        # undistorted_pts are pixel coordinates in the undistorted image corresponding
+        # to each distorted pixel.
+        map_xy = undistorted_pts.reshape(h_dst, w_dst, 2).astype(np.float32)
+
+        return cast(
+            tuple[CT.DistortRectifyMap, CT.DistortRectifyMap],
+            (map_xy[..., 0], map_xy[..., 1])
         )
 
     def undistort_image(
@@ -148,6 +189,37 @@ class Camera:
             self._optimal_undistort_rectify_map
             if self._parse_use_optimal_camera_matrix(use_optimal_camera_matrix)
             else self._undistort_rectify_map
+        )
+
+        remapped: CT.Image = cv2.remap(
+            image,
+            map1,
+            map2,
+            interpolation=cv2.INTER_LINEAR,
+            borderValue=0,
+        )
+        return remapped
+
+    def distort_image(
+        self,
+        image: CT.Image,
+        use_optimal_camera_matrix: bool | None = None,
+    ) -> CT.Image:
+        """Return an distorted image
+
+        This implementation uses cv2.remap with a precomputed map, instead of
+        cv2.undistort. This is significantly faster when undistorting multiple images
+        because the undistortion maps are computed only once.
+
+        Args:
+            image: Image array
+            use_optimal_camera_matrix: If True applies optimal camera matrix
+
+        """
+        map1, map2 = (
+            self._distort_rectify_map
+            if self._parse_use_optimal_camera_matrix(use_optimal_camera_matrix)
+            else self._distort_rectify_map
         )
 
         remapped: CT.Image = cv2.remap(
