@@ -68,7 +68,7 @@ def to_np_point_array(
 
     # is_single_coord = arr.ndim == 1
     arr = np.asarray(arr).astype(np.float64)
-    arr = np.squeeze(arr)
+    # arr = np.squeeze(arr)
 
     if arr.ndim == 1:
         if len(arr) != n_coords:
@@ -85,7 +85,10 @@ def to_np_point_array(
         return arr
 
     else:
-        raise ValueError(
-            f"Invalid coordinate shape after squeezing: {arr.shape}. "
-            f"Expected shape ({n_coords},) or (N, {n_coords})."
-        )
+        if arr.ndim == 3 and len(arr) == 1:
+            return arr[0]
+        else:
+            raise ValueError(
+                f"Invalid coordinate shape: {arr.shape}. "
+                f"Expected shape ({n_coords},) or (N, {n_coords})."
+            )
