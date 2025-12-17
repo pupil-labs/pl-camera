@@ -202,18 +202,20 @@ class Camera:
             use_optimal_camera_matrix: If True applies optimal camera matrix
 
         """
-        points_2d = to_np_point_array(points_2d, 2)
+        np_points_2d = to_np_point_array(points_2d, 2)
         distortion_coefficients = self._get_distortion_coefficients(use_distortion)
         camera_matrix = self._get_unprojection_camera_matrix(use_optimal_camera_matrix)
 
-        points_3d = cv2.undistortPoints(
-            src=points_2d,
+        projected_3d = cv2.undistortPoints(
+            src=np_points_2d,
             cameraMatrix=camera_matrix,
             distCoeffs=distortion_coefficients,
-        )
-        points_3d = cv2.convertPointsToHomogeneous(np.array(points_3d))
-        points_3d = points_3d.squeeze().astype(np.float64)
-        return points_3d
+        )[:, 0]
+        projected_3d = cv2.convertPointsToHomogeneous(projected_3d)[:, 0]
+        projected_3d = projected_3d.astype(np.float64)
+        if np_points_2d.ndim == 1:
+            return cast(CT.Points3D, projected_3d[0])
+        return projected_3d
 
     def project_points(
         self,
@@ -230,21 +232,28 @@ class Camera:
             use_optimal_camera_matrix: If True applies optimal camera matrix
 
         """
-        points_3d = to_np_point_array(points_3d, 3)
+        np_points_3d = to_np_point_array(points_3d, 3)
         distortion_coefficients = self._get_distortion_coefficients(use_distortion)
         camera_matrix = self._get_unprojection_camera_matrix(use_optimal_camera_matrix)
 
         rvec = tvec = np.zeros((1, 1, 3))
 
-        projected, _ = cv2.projectPoints(
-            objectPoints=points_3d,
-            rvec=rvec,
-            tvec=tvec,
-            cameraMatrix=camera_matrix,
-            distCoeffs=distortion_coefficients,
+        projected_2d, _ = cast(
+            tuple[np.ndarray, np.ndarray],
+            cv2.projectPoints(
+                objectPoints=np_points_3d,
+                rvec=rvec,
+                tvec=tvec,
+                cameraMatrix=camera_matrix,
+                distCoeffs=distortion_coefficients,
+            ),
         )
+        projected_2d = projected_2d[:, 0]
+        projected_2d = projected_2d.astype(np.float64)
+        if np_points_3d.ndim == 1:
+            return cast(CT.Points2D, projected_2d[0])
 
-        return np.array(projected).astype(np.float64).squeeze()
+        return projected_2d
 
     def undistort_points(
         self,
@@ -258,17 +267,20 @@ class Camera:
             use_optimal_camera_matrix: If True applies optimal camera matrix
 
         """
-        points_2d = to_np_point_array(points_2d, 2)
+        np_points_2d = to_np_point_array(points_2d, 2)
         camera_matrix = self._get_unprojection_camera_matrix(use_optimal_camera_matrix)
 
         undistorted_2d = cv2.undistortPoints(
-            src=points_2d,
+            src=np_points_2d,
             cameraMatrix=camera_matrix,
             distCoeffs=self.distortion_coefficients,
             R=None,
             P=camera_matrix,
-        )
-        return undistorted_2d.squeeze()
+        )[:, 0]
+        if np_points_2d.ndim == 1:
+            return cast(CT.Points2D, undistorted_2d[0])
+
+        return undistorted_2d
 
     def __repr__(self) -> str:
         return (

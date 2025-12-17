@@ -1,3 +1,5 @@
+from typing import cast
+
 import numpy as np
 import numpy.typing as npt
 from numpy.lib.recfunctions import structured_to_unstructured
@@ -66,9 +68,7 @@ def to_np_point_array(
         except Exception as e:
             raise ValueError(f"Failed to convert structured array: {e}") from e
 
-    # is_single_coord = arr.ndim == 1
     arr = np.asarray(arr).astype(np.float64)
-    arr = np.squeeze(arr)
 
     if arr.ndim == 1:
         if len(arr) != n_coords:
@@ -85,7 +85,10 @@ def to_np_point_array(
         return arr
 
     else:
+        if arr.ndim == 3 and len(arr) == 1:
+            return cast(npt.NDArray[np.float64], arr[0])
+
         raise ValueError(
-            f"Invalid coordinate shape after squeezing: {arr.shape}. "
+            f"Invalid coordinate shape: {arr.shape}. "
             f"Expected shape ({n_coords},) or (N, {n_coords})."
         )

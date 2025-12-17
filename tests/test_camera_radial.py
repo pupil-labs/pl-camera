@@ -1,3 +1,4 @@
+import cv2
 import numpy as np
 import pytest
 from numpy.testing import assert_almost_equal
@@ -71,6 +72,7 @@ def test_various_configurations(
         np.array([100, 200], dtype=np.int32),  # unstructured ints
         [100, 200],  # list
         (100, 200),  # tuple
+        (100, 200),  # tuple
     ],
 )
 def test_unproject_point(camera_radial: Camera, point):
@@ -89,24 +91,48 @@ def test_unproject_point_optimal(camera_radial: Camera):
 @pytest.mark.parametrize(
     "points",
     [
-        np.array([(100, 200), (800, 600)]),  # unstructured ints
+        # unstructured ints
+        np.array([(100, 200)]),
+        np.array([(100, 200), (800, 600)]),
+        # unstructured np ints
+        np.array([(100, 200)], dtype=np.int32),
+        np.array([(100, 200), (800, 600)], dtype=np.int32),
+        # structured floats
+        np.array(
+            [(100.0, 200.0)],
+            dtype=[("x", np.float32), ("y", np.float32)],
+        ),
         np.array(
             [(100, 200), (800, 600)],
             dtype=[("x", np.int32), ("y", np.int32)],
-        ),  # structured ints
-        np.array([(100, 200), (800, 600)], dtype=np.int32),  # unstructured ints
+        ),
+        # structured floats
+        np.array(
+            [(100.0, 200.0)],
+            dtype=[("x", np.float32), ("y", np.float32)],
+        ),
         np.array(
             [(100.0, 200.0), (800.0, 600.0)],
             dtype=[("x", np.float32), ("y", np.float32)],
-        ),  # structured floats
-        np.array(
-            [(100.0, 200.0), (800.0, 600.0)],
-            dtype=[("x", np.float32), ("y", np.float32)],
-        ),  # structured floats
-        [(100, 200), (800, 600)],  # list of tuples
-        ([100, 200], [800, 600]),  # tuple of lists
-        [[100, 200], [800, 600]],  # list of lists
-        ((100, 200), (800, 600)),  # tuple of tuples
+        ),
+        # list of tuples
+        [(100, 200)],
+        [(100, 200), (800, 600)],
+        # tuple of lists
+        ([100, 200],),
+        ([100, 200], [800, 600]),
+        # tuple of lists
+        ([100, 200],),
+        ([100, 200], [800, 600]),
+        # list of lists
+        [[100, 200]],
+        [[100, 200], [800, 600]],
+        # tuple of tuples
+        ((100, 200),),
+        ((100, 200), (800, 600)),
+        # unsqueezed list of lists
+        [[[100, 200]]],
+        [[[100, 200], [800, 600]]],
     ],
 )
 def test_unproject_points(camera_radial: Camera, points):
@@ -115,7 +141,19 @@ def test_unproject_points(camera_radial: Camera, points):
         [-0.01829243, -0.01627422, 1.0],
     ])
     unprojected = camera_radial.unproject_points(points)
-    assert_almost_equal(unprojected, np.asarray(expected), decimal=3)
+
+    np_points = np.array(points)
+    n_expected_points = len(np_points[0]) if np_points.ndim > 2 else len(np_points)
+
+    assert_almost_equal(
+        unprojected, np.asarray(expected[:n_expected_points]), decimal=3
+    )
+
+
+def test_unproject_many_points(camera_radial: Camera):
+    points = [(x, y) for x in range(0, 1600, 10) for y in range(0, 1200, 10)]
+    output = camera_radial.unproject_points(points)
+    assert len(output) == len(points)
 
 
 def test_unproject_point_without_distortion(camera_radial: Camera):
@@ -152,9 +190,22 @@ def test_unproject_points_without_distortion(camera_radial: Camera):
         (-0.75170, -0.55260, 1.0),  # tuple
     ],
 )
-def test_project_point(camera_radial: Camera, point: CT.Points2DLike):
+def test_project_point(camera_radial: Camera, point: CT.Points3DLike):
     expected = np.array([276.45064393, 218.50131053])
     projected = camera_radial.project_points(point)
+    assert_almost_equal(projected, expected, decimal=4)
+
+
+def test_project_point_from_cv2_homogenous(camera_radial: Camera):
+    cv2_output = cv2.convertPointsToHomogeneous(
+        cv2.undistortPoints(
+            np.array([(600.0, 600)], dtype=np.float32),
+            camera_radial.camera_matrix,
+            camera_radial.distortion_coefficients,
+        )
+    )
+    expected = np.array([[600.0, 600]])
+    projected = camera_radial.project_points(cv2_output)  # type: ignore
     assert_almost_equal(projected, expected, decimal=4)
 
 
@@ -168,27 +219,52 @@ def test_project_point_optimal(camera_radial: Camera):
 @pytest.mark.parametrize(
     "points",
     [
-        np.array([(-0.75170, -0.55260, 1.0), (0.32508, 0.08498, 1.0)]),  # unstructured
-        np.array([
-            [[-0.75170, -0.55260, 1.0], [0.32508, 0.08498, 1.0]]
-        ]),  # unsqueezed unstructured
+        # unstructured
+        np.array([(-0.75170, -0.55260, 1.0)]),
+        np.array([(-0.75170, -0.55260, 1.0), (0.32508, 0.08498, 1.0)]),
+        # unsqueezed unstructured
+        np.array([[[-0.75170, -0.55260, 1.0]]]),
+        np.array([[[-0.75170, -0.55260, 1.0], [0.32508, 0.08498, 1.0]]]),
+        # structured
+        np.array(
+            [(-0.75170, -0.55260, 1.0)],
+            dtype=[("x", np.float32), ("y", np.float32), ("z", np.float32)],
+        ),
         np.array(
             [(-0.75170, -0.55260, 1.0), (0.32508, 0.08498, 1.0)],
             dtype=[("x", np.float32), ("y", np.float32), ("z", np.float32)],
-        ),  # structured
-        [(-0.75170, -0.55260, 1.0), (0.32508, 0.08498, 1.0)],  # list of tuples
-        ([-0.75170, -0.55260, 1.0], [0.32508, 0.08498, 1.0]),  # tuple of lists
-        [[-0.75170, -0.55260, 1.0], [0.32508, 0.08498, 1.0]],  # list of lists
-        [
-            [[-0.75170, -0.55260, 1.0], [0.32508, 0.08498, 1.0]]
-        ],  # unsqueezed list of lists
-        ((-0.75170, -0.55260, 1.0), (0.32508, 0.08498, 1.0)),  # tuple of tuples
+        ),
+        # list of tuples
+        [(-0.75170, -0.55260, 1.0)],
+        [(-0.75170, -0.55260, 1.0), (0.32508, 0.08498, 1.0)],
+        # tuple of lists
+        ([-0.75170, -0.55260, 1.0],),
+        ([-0.75170, -0.55260, 1.0], [0.32508, 0.08498, 1.0]),
+        # list of lists
+        [[-0.75170, -0.55260, 1.0]],
+        [[-0.75170, -0.55260, 1.0], [0.32508, 0.08498, 1.0]],
+        # unsqueezed list of lists
+        [[[-0.75170, -0.55260, 1.0]]],
+        [[[-0.75170, -0.55260, 1.0], [0.32508, 0.08498, 1.0]]],
+        # tuple of tuples
+        ((-0.75170, -0.55260, 1.0),),
+        ((-0.75170, -0.55260, 1.0), (0.32508, 0.08498, 1.0)),
     ],
 )
-def test_project_points(camera_radial: Camera, points: CT.Points2DLike):
+def test_project_points(camera_radial: Camera, points: CT.Points3DLike):
     expected = np.array([[276.45064393, 218.50131053], [1096.58550912, 687.76068265]])
     projected = camera_radial.project_points(points)
-    assert_almost_equal(projected, expected, decimal=4)
+
+    np_points = np.array(points)
+    n_expected_points = len(np_points[0]) if np_points.ndim > 2 else len(np_points)
+
+    assert_almost_equal(projected, expected[:n_expected_points], decimal=4)
+
+
+def test_project_many_points(camera_radial: Camera):
+    points = [(x, y, 1) for x in np.arange(0, 1, 0.01) for y in np.arange(0, 1, 0.01)]
+    output = camera_radial.project_points(points)
+    assert len(output) == len(points)
 
 
 def test_project_point_without_distortion(camera_radial: Camera):
@@ -221,8 +297,42 @@ def test_undistort_point_optimal(camera_radial: Camera):
     assert_almost_equal(undistorted, expected, decimal=4)
 
 
-def test_undistort_points(camera_radial: Camera):
-    points = np.array([[10, 10], [50, 50], [100, 100], [600, 600]])
+@pytest.mark.parametrize(
+    "points",
+    [
+        # unstructured
+        np.array([(10, 10)]),
+        np.array([(10, 10), (50, 50), (100, 100), (600, 600)]),
+        # unsqueezed unstructured
+        np.array([[(10, 10)]]),
+        np.array([[(10, 10), (50, 50), (100, 100), (600, 600)]]),
+        # structured
+        np.array(
+            [(10, 10)],
+            dtype=[("x", np.float32), ("y", np.float32)],
+        ),
+        np.array(
+            [(10, 10), (50, 50), (100, 100), (600, 600)],
+            dtype=[("x", np.float32), ("y", np.float32)],
+        ),
+        # list of tuples
+        [(10, 10)],
+        [(10, 10), (50, 50), (100, 100), (600, 600)],
+        # tuple of lists
+        ([10, 10],),
+        ([10, 10], [50, 50], [100, 100], [600, 600]),
+        # list of lists
+        [[10, 10]],
+        [[10, 10], [50, 50], [100, 100], [600, 600]],
+        # unsqueezed list of lists
+        [[[10, 10]]],
+        [[[10, 10], [50, 50], [100, 100], [600, 600]]],
+        # tuple of tuples
+        ((10, 10),),
+        ((10, 10), (50, 50), (100, 100), (600, 600)),
+    ],
+)
+def test_undistort_points(camera_radial: Camera, points):
     undistorted = camera_radial.undistort_points(points)
     expected = np.array([
         [-688.71195284, -518.85317532],
@@ -230,7 +340,16 @@ def test_undistort_points(camera_radial: Camera):
         [-280.38559214, -175.43871054],
         [596.10485541, 599.71556346],
     ])
-    assert_almost_equal(undistorted, expected, decimal=4)
+
+    np_points = np.array(points)
+    n_expected_points = len(np_points[0]) if np_points.ndim > 2 else len(np_points)
+    assert_almost_equal(undistorted, expected[:n_expected_points], decimal=4)
+
+
+def test_undistort_many_points(camera_radial: Camera):
+    points = [(x, y) for x in range(0, 1600, 10) for y in range(0, 1200, 10)]
+    output = camera_radial.undistort_points(points)
+    assert len(output) == len(points)
 
 
 @pytest.mark.parametrize("width", [-1, 0])
