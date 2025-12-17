@@ -50,7 +50,7 @@ def test_various_configurations(
         use_distortion=use_distortion,
     )
     camera.undistort_image(
-        np.zeros((1600, 1200)),
+        np.zeros((1600, 1200), dtype=np.uint8),
         use_optimal_camera_matrix=use_optimal_camera_matrix,
     )
     camera.undistort_points(

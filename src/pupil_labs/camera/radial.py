@@ -212,8 +212,8 @@ class Camera:
             distCoeffs=distortion_coefficients,
         )
         points_3d = cv2.convertPointsToHomogeneous(np.array(points_3d))
-
-        return points_3d.squeeze()
+        points_3d = points_3d.squeeze().astype(np.float64)
+        return points_3d
 
     def project_points(
         self,
