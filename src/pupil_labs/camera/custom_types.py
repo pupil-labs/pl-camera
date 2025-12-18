@@ -20,3 +20,4 @@ Points3DLike = (
     NDArray[floating] | Sequence[Sequence[NumberLike]] | list[Point3DLike] | Point3DLike
 )
 UndistortRectifyMap = NDArray[float64]
+DistortRectifyMap = NDArray[float64]
