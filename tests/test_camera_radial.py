@@ -63,6 +63,10 @@ def test_various_configurations(
         use_optimal_camera_matrix=use_optimal_camera_matrix,
         use_distortion=use_distortion,
     )
+    camera.distort_points(
+        (200.0, 200.0),
+        use_optimal_camera_matrix=use_optimal_camera_matrix,
+    )
 
 
 @pytest.mark.parametrize(
@@ -469,3 +473,189 @@ def test_invalid_unproject_points_shapes(camera_radial: Camera, points):
 def test_invalid_project_points_shapes(camera_radial: Camera, points):
     with pytest.raises(ValueError, match="3 coordinate"):
         camera_radial.project_points(points)
+
+
+def test_distort_point(camera_radial: Camera):
+    """Test distorting a single point."""
+    point = np.array([400, 400])
+    distorted = camera_radial.distort_points(point)
+    expected = np.array([431.1344, 416.1969])
+    assert_almost_equal(distorted, expected, decimal=4)
+
+
+def test_distort_point_optimal(camera_radial: Camera):
+    """Test distorting a single point with optimal camera matrix."""
+    point = np.array([400, 400])
+    distorted = camera_radial.distort_points(point, use_optimal_camera_matrix=True)
+    expected = np.array([456.8362, 429.7182])
+    assert_almost_equal(distorted, expected, decimal=4)
+
+
+@pytest.mark.parametrize(
+    "points",
+    [
+        # unstructured
+        np.array([(800, 800)]),
+        np.array([
+            (800, 800),
+            (400, 400),
+            (100, 100),
+            (10, 10),
+        ]),
+        # unsqueezed unstructured
+        np.array([[(800, 800)]]),
+        np.array([
+            [
+                (800, 800),
+                (400, 400),
+                (100, 100),
+                (10, 10),
+            ]
+        ]),
+        # structured
+        np.array(
+            [(800, 800)],
+            dtype=[("x", np.float32), ("y", np.float32)],
+        ),
+        np.array(
+            [
+                (800, 800),
+                (400, 400),
+                (100, 100),
+                (10, 10),
+            ],
+            dtype=[("x", np.float32), ("y", np.float32)],
+        ),
+        # list of tuples
+        [(800, 800)],
+        [
+            (800, 800),
+            (400, 400),
+            (100, 100),
+            (10, 10),
+        ],
+        # tuple of lists
+        ([800, 800],),
+        (
+            [800, 800],
+            [400, 400],
+            [100, 100],
+            [10, 10],
+        ),
+        # list of lists
+        [[800, 800]],
+        [
+            [800, 800],
+            [400, 400],
+            [100, 100],
+            [10, 10],
+        ],
+        # unsqueezed list of lists
+        [[[800, 800]]],
+        [
+            [
+                [800, 800],
+                [400, 400],
+                [100, 100],
+                [10, 10],
+            ]
+        ],
+        # tuple of tuples
+        ((800, 800),),
+        (
+            (800, 800),
+            (400, 400),
+            (100, 100),
+            (10, 10),
+        ),
+    ],
+)
+def test_distort_points(camera_radial: Camera, points):
+    """Test distorting multiple points with various input formats."""
+    distorted = camera_radial.distort_points(points)
+    expected = np.array([
+        [800.1897, 797.6494],
+        [431.1344, 416.1969],
+        [251.5298, 209.4722],
+        [213.7963, 163.6328],
+    ])
+
+    np_points = np.array(points)
+    n_expected_points = len(np_points[0]) if np_points.ndim > 2 else len(np_points)
+    assert_almost_equal(distorted, expected[:n_expected_points], decimal=4)
+
+
+def test_distort_many_points(camera_radial: Camera):
+    """Test distorting a large number of points."""
+    points = [(x, y) for x in range(-800, 800, 10) for y in range(-600, 600, 10)]
+    output = camera_radial.distort_points(points)
+    assert len(output) == len(points)
+
+
+@pytest.mark.parametrize("delta", [0, 100, 300])
+def test_distort_undistort_roundtrip(camera_radial: Camera, delta: int):
+    """Test distort and undistort are inverse operations."""
+    width, height = camera_radial.pixel_width, camera_radial.pixel_height
+    original = np.array([
+        [width // 2, height // 2],
+        [width // 2 + delta, height // 2 + delta],
+        [width // 2 - delta, height // 2 - delta],
+        [width // 2 + delta, height // 2 - delta],
+        [width // 2 - delta, height // 2 + delta],
+    ])
+
+    undistorted = camera_radial.undistort_points(original)
+    redistorted = camera_radial.distort_points(undistorted)
+    assert_almost_equal(redistorted, original, decimal=2)
+
+
+@pytest.mark.parametrize("delta", [0, 100, 300])
+def test_undistort_distort_roundtrip(camera_radial: Camera, delta: int):
+    """Test undistort and distort for points near center are inverse operations"""
+    width, height = camera_radial.pixel_width, camera_radial.pixel_height
+    original = np.array([
+        [width // 2, height // 2],
+        [width // 2 + delta, height // 2 + delta],
+        [width // 2 - delta, height // 2 - delta],
+        [width // 2 + delta, height // 2 - delta],
+        [width // 2 - delta, height // 2 + delta],
+    ])
+
+    distorted = camera_radial.distort_points(original)
+    reundistorted = camera_radial.undistort_points(distorted)
+    assert_almost_equal(reundistorted, original, decimal=2)
+
+
+@pytest.mark.parametrize(
+    "points",
+    [
+        [10, 10, 1],
+        [[10, 10, 1]],
+        [[10, 10, 1], [10, 10, 1]],
+    ],
+)
+def test_invalid_distort_points_shapes(camera_radial: Camera, points):
+    """Test that distort_points raises ValueError for invalid input shapes."""
+    with pytest.raises(ValueError, match="2 coordinate"):
+        camera_radial.distort_points(points)
+
+
+def test_distort_points_edge_cases(camera_radial: Camera):
+    """Test distorting points at image edges."""
+    edge_points = np.array(
+        [
+            [0, 0],  # top-left
+            [camera_radial.pixel_width, 0],  # top-right
+            [0, camera_radial.pixel_height],  # bottom-left
+            [camera_radial.pixel_width, camera_radial.pixel_height],  # bottom-right
+        ],
+        dtype=np.float32,
+    )
+
+    undistorted = camera_radial.undistort_points(edge_points)
+    redistorted = camera_radial.distort_points(undistorted)
+
+    # Due to distortion, edge points may not map perfectly, but should be close
+    # This test primarily ensures no crashes occur at boundaries
+    assert redistorted.shape == edge_points.shape
+    assert not np.any(np.isnan(redistorted))
