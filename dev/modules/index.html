@@ -1015,7 +1015,7 @@
             <b><code><a class="autorefs autorefs-internal" title="            distort_image (pupil_labs.camera.Camera.distort_image)" href="#pupil_labs.camera.Camera.distort_image">distort_image</a></code></b>
             –
             <div class="doc-md-description">
-              <p>Return an distorted image</p>
+              <p>Return a distorted image</p>
             </div>
           </li>
           <li class="doc-section-item field-body">
@@ -1161,7 +1161,7 @@ captured distorted image.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Return an distorted image</p>
+        <p>Return a distorted image</p>
 <p>This implementation uses cv2.remap with a precomputed map, instead of
 cv2.undistort. This is significantly faster when undistorting multiple images
 because the undistortion maps are computed only once.</p>
@@ -1226,7 +1226,7 @@ because the undistortion maps are computed only once.</p>
     <span class="n">image</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Image</span><span class="p">,</span>
     <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CT</span><span class="o">.</span><span class="n">Image</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return an distorted image</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a distorted image</span>
 
 <span class="sd">    This implementation uses cv2.remap with a precomputed map, instead of</span>
 <span class="sd">    cv2.undistort. This is significantly faster when undistorting multiple images</span>
@@ -1298,7 +1298,8 @@ because the undistortion maps are computed only once.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">325</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">324</span>
+<span class="normal">325</span>
 <span class="normal">326</span>
 <span class="normal">327</span>
 <span class="normal">328</span>
@@ -1319,8 +1320,7 @@ because the undistortion maps are computed only once.</p>
 <span class="normal">343</span>
 <span class="normal">344</span>
 <span class="normal">345</span>
-<span class="normal">346</span>
-<span class="normal">347</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">distort_points</span><span class="p">(</span>
+<span class="normal">346</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">distort_points</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">points_2d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">,</span>
     <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1652,8 +1652,7 @@ because the undistortion maps are computed only once.</p>
 <span class="normal">319</span>
 <span class="normal">320</span>
 <span class="normal">321</span>
-<span class="normal">322</span>
-<span class="normal">323</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_points</span><span class="p">(</span>
+<span class="normal">322</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_points</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">points_2d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">,</span>
     <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1667,10 +1666,9 @@ because the undistortion maps are computed only once.</p>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">np_points_2d</span> <span class="o">=</span> <span class="n">to_np_point_array</span><span class="p">(</span><span class="n">points_2d</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">camera_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_unprojection_camera_matrix</span><span class="p">(</span><span class="n">use_optimal_camera_matrix</span><span class="p">)</span>
-
     <span class="n">undistorted_2d</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">undistortPoints</span><span class="p">(</span>
         <span class="n">src</span><span class="o">=</span><span class="n">np_points_2d</span><span class="p">,</span>
-        <span class="n">cameraMatrix</span><span class="o">=</span><span class="n">camera_matrix</span><span class="p">,</span>
+        <span class="n">cameraMatrix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">camera_matrix</span><span class="p">,</span>
         <span class="n">distCoeffs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">distortion_coefficients</span><span class="p">,</span>
         <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">P</span><span class="o">=</span><span class="n">camera_matrix</span><span class="p">,</span>
