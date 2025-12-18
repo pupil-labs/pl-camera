@@ -166,7 +166,7 @@ class Camera:
 
         return cast(
             tuple[CT.DistortRectifyMap, CT.DistortRectifyMap],
-            (map_xy[..., 0], map_xy[..., 1])
+            (map_xy[..., 0], map_xy[..., 1]),
         )
 
     def undistort_image(
