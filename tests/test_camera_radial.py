@@ -7,6 +7,7 @@ from numpy.testing import assert_almost_equal
 
 from pupil_labs.camera import Camera
 from pupil_labs.camera import custom_types as CT
+from pupil_labs.camera.assets import chessboard_image
 
 CAMERA_MATRIX = [
     [891.61897098, 0.0, 816.30726443],
@@ -599,7 +600,7 @@ def test_distort_points_edge_cases(camera_radial: Camera):
 
 @pytest.fixture  # (scope="session")
 def distorted_image(camera_radial: Camera, test_data_path: Path):
-    return cv2.imread(str((test_data_path / "chessboard.jpeg").resolve()))
+    return chessboard_image
 
 
 @pytest.fixture
