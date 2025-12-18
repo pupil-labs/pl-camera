@@ -173,7 +173,7 @@ class Camera:
         image: CT.Image,
         use_optimal_camera_matrix: bool | None = None,
     ) -> CT.Image:
-        """Return an distorted image
+        """Return a distorted image
 
         This implementation uses cv2.remap with a precomputed map, instead of
         cv2.undistort. This is significantly faster when undistorting multiple images
