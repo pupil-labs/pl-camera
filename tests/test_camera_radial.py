@@ -263,9 +263,9 @@ def test_undistort_point(camera_radial: Camera):
 
 
 def test_undistort_point_optimal(camera_radial: Camera):
-    point = np.array([500, 500])
+    point = np.array([10, 10])
     undistorted = camera_radial.undistort_points(point, use_optimal_camera_matrix=True)
-    expected = np.array([466.53389311, 487.41463334])
+    expected = np.array([-247.65881137, -338.23329978])
     assert_almost_equal(undistorted, expected, decimal=4)
 
 

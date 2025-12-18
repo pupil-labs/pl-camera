@@ -309,10 +309,9 @@ class Camera:
         """
         np_points_2d = to_np_point_array(points_2d, 2)
         camera_matrix = self._get_unprojection_camera_matrix(use_optimal_camera_matrix)
-
         undistorted_2d = cv2.undistortPoints(
             src=np_points_2d,
-            cameraMatrix=camera_matrix,
+            cameraMatrix=self.camera_matrix,
             distCoeffs=self.distortion_coefficients,
             R=None,
             P=camera_matrix,
