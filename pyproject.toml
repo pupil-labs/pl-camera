@@ -18,10 +18,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
-dependencies = [
-    "numpy",
-    "opencv-python>=4.11.0.86",
-]
+dependencies = ["numpy", "opencv-python>=4.11.0.86"]
 
 [project.urls]
 Homepage = "https://pupil-labs.github.io/pl-camera"
@@ -76,7 +73,7 @@ source = ["pupil_labs"]
 [tool.deptry.per_rule_ignores]
 DEP001 = ["pupil_labs", "cv2"]
 DEP002 = ["opencv-python"]
-DEP003 = ["pupil_labs", "typing_extensions"]
+DEP003 = ["pupil_labs", "typing_extensions", "IPython"]
 
 [tool.hatch.version]
 source = "uv-dynamic-versioning"
