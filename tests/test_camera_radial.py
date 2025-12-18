@@ -355,19 +355,19 @@ def test_valid_distortion_coefficients(
     camera_radial.distortion_coefficients = distortion_coefficients
 
 
-# NOTE(dan): this test is disabled because unproject/project is not completely accurate
-# using opencv funcs, when a suitable perfomant replacement is found it can be enabled
-# def test_unprojection_and_reprojection(camera_radial: CameraRadial):
-#     original = [
-#         (0, 0),
-#         (0, camera_radial.pixel_height),
-#         (camera_radial.pixel_width, 0),
-#         (camera_radial.pixel_width, camera_radial.pixel_height),
-#     ]
+def test_unprojection_and_reprojection_edge_cases(camera_radial: Camera):
+    original = [
+        [0, 0],  # top-left
+        [camera_radial.pixel_width, 0],  # top-right
+        [0, camera_radial.pixel_height],  # bottom-left
+        [camera_radial.pixel_width, camera_radial.pixel_height],  # bottom-right
+    ]
 
-#     unprojected = camera_radial.unproject_points(original)
-#     reprojected = camera_radial.project_points(unprojected)
-#     assert_almost_equal(original, reprojected, decimal=4)
+    # Due to distortion, edge points may not map perfectly, but should be close
+    # This test primarily ensures no crashes occur at boundaries
+    unprojected = camera_radial.unproject_points(original)
+    reprojected = camera_radial.project_points(unprojected)
+    assert (np.absolute(original - reprojected)).max() < 50
 
 
 @pytest.mark.parametrize(
@@ -563,7 +563,7 @@ def test_invalid_distort_points_shapes(camera_radial: Camera, points):
 
 def test_distort_points_edge_cases(camera_radial: Camera):
     """Test distorting points at image edges."""
-    edge_points = np.array(
+    original = np.array(
         [
             [0, 0],  # top-left
             [camera_radial.pixel_width, 0],  # top-right
@@ -573,10 +573,10 @@ def test_distort_points_edge_cases(camera_radial: Camera):
         dtype=np.float32,
     )
 
-    undistorted = camera_radial.undistort_points(edge_points)
+    undistorted = camera_radial.undistort_points(original)
     redistorted = camera_radial.distort_points(undistorted)
 
     # Due to distortion, edge points may not map perfectly, but should be close
     # This test primarily ensures no crashes occur at boundaries
-    assert redistorted.shape == edge_points.shape
-    assert not np.any(np.isnan(redistorted))
+    assert redistorted.shape == original.shape
+    assert (np.absolute(original - redistorted)).max() < 50
