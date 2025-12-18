@@ -1192,8 +1192,7 @@ because the undistortion maps are computed only once.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">170</span>
-<span class="normal">171</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">171</span>
 <span class="normal">172</span>
 <span class="normal">173</span>
 <span class="normal">174</span>
@@ -1221,7 +1220,8 @@ because the undistortion maps are computed only once.</p>
 <span class="normal">196</span>
 <span class="normal">197</span>
 <span class="normal">198</span>
-<span class="normal">199</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">distort_image</span><span class="p">(</span>
+<span class="normal">199</span>
+<span class="normal">200</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">distort_image</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">image</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Image</span><span class="p">,</span>
     <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1298,8 +1298,7 @@ because the undistortion maps are computed only once.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">324</span>
-<span class="normal">325</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">325</span>
 <span class="normal">326</span>
 <span class="normal">327</span>
 <span class="normal">328</span>
@@ -1320,7 +1319,8 @@ because the undistortion maps are computed only once.</p>
 <span class="normal">343</span>
 <span class="normal">344</span>
 <span class="normal">345</span>
-<span class="normal">346</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">distort_points</span><span class="p">(</span>
+<span class="normal">346</span>
+<span class="normal">347</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">distort_points</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">points_2d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">,</span>
     <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1401,8 +1401,7 @@ coefficients. If False, ignores distortion.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">259</span>
-<span class="normal">260</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">260</span>
 <span class="normal">261</span>
 <span class="normal">262</span>
 <span class="normal">263</span>
@@ -1437,7 +1436,8 @@ coefficients. If False, ignores distortion.</p>
 <span class="normal">292</span>
 <span class="normal">293</span>
 <span class="normal">294</span>
-<span class="normal">295</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">project_points</span><span class="p">(</span>
+<span class="normal">295</span>
+<span class="normal">296</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">project_points</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">points_3d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points3DLike</span><span class="p">,</span>
     <span class="n">use_distortion</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -1524,8 +1524,7 @@ because the undistortion maps are computed only once.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">140</span>
-<span class="normal">141</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">141</span>
 <span class="normal">142</span>
 <span class="normal">143</span>
 <span class="normal">144</span>
@@ -1552,7 +1551,8 @@ because the undistortion maps are computed only once.</p>
 <span class="normal">165</span>
 <span class="normal">166</span>
 <span class="normal">167</span>
-<span class="normal">168</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_image</span><span class="p">(</span>
+<span class="normal">168</span>
+<span class="normal">169</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_image</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">image</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Image</span><span class="p">,</span>
     <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1628,8 +1628,7 @@ because the undistortion maps are computed only once.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">297</span>
-<span class="normal">298</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">298</span>
 <span class="normal">299</span>
 <span class="normal">300</span>
 <span class="normal">301</span>
@@ -1653,7 +1652,8 @@ because the undistortion maps are computed only once.</p>
 <span class="normal">319</span>
 <span class="normal">320</span>
 <span class="normal">321</span>
-<span class="normal">322</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_points</span><span class="p">(</span>
+<span class="normal">322</span>
+<span class="normal">323</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_points</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">points_2d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">,</span>
     <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1737,8 +1737,7 @@ distortion coefficients. If False, ignores distortion correction.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">229</span>
-<span class="normal">230</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">230</span>
 <span class="normal">231</span>
 <span class="normal">232</span>
 <span class="normal">233</span>
@@ -1765,7 +1764,8 @@ distortion coefficients. If False, ignores distortion correction.</p>
 <span class="normal">254</span>
 <span class="normal">255</span>
 <span class="normal">256</span>
-<span class="normal">257</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unproject_points</span><span class="p">(</span>
+<span class="normal">257</span>
+<span class="normal">258</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unproject_points</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">points_2d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">,</span>
     <span class="n">use_distortion</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
