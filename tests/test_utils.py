@@ -65,11 +65,14 @@ class TestPerspectiveTransform:
     def test_translation_transform(self):
         """Translation matrix should shift points."""
         points = [(0, 0), (100, 100)]
-        translation = np.array([
-            [1, 0, 10],
-            [0, 1, 20],
-            [0, 0, 1],
-        ], dtype=np.float64)
+        translation = np.array(
+            [
+                [1, 0, 10],
+                [0, 1, 20],
+                [0, 0, 1],
+            ],
+            dtype=np.float64,
+        )
         result = perspective_transform(points, translation)
         expected = [(10, 20), (110, 120)]
         assert_almost_equal(result, expected, decimal=5)
@@ -77,11 +80,14 @@ class TestPerspectiveTransform:
     def test_scale_transform(self):
         """Scaling matrix should scale points."""
         points = [(10, 10), (50, 50)]
-        scale = np.array([
-            [2, 0, 0],
-            [0, 2, 0],
-            [0, 0, 1],
-        ], dtype=np.float64)
+        scale = np.array(
+            [
+                [2, 0, 0],
+                [0, 2, 0],
+                [0, 0, 1],
+            ],
+            dtype=np.float64,
+        )
         result = perspective_transform(points, scale)
         expected = [(20, 20), (100, 100)]
         assert_almost_equal(result, expected, decimal=5)
