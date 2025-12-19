@@ -639,6 +639,28 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#pupil_labs.camera.get_perspective_transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_perspective_transform
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pupil_labs.camera.perspective_transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;perspective_transform
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -888,6 +910,28 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#pupil_labs.camera.get_perspective_transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_perspective_transform
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pupil_labs.camera.perspective_transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;perspective_transform
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -967,6 +1011,25 @@
     </ul>
 
 
+
+
+<p><span class="doc-section-title">Functions:</span></p>
+    <ul>
+          <li class="doc-section-item field-body">
+            <b><code><a class="autorefs autorefs-internal" title="            get_perspective_transform (pupil_labs.camera.get_perspective_transform)" href="#pupil_labs.camera.get_perspective_transform">get_perspective_transform</a></code></b>
+            –
+            <div class="doc-md-description">
+              <p>Compute a perspective transformation matrix from four point correspondences.</p>
+            </div>
+          </li>
+          <li class="doc-section-item field-body">
+            <b><code><a class="autorefs autorefs-internal" title="            perspective_transform (pupil_labs.camera.perspective_transform)" href="#pupil_labs.camera.perspective_transform">perspective_transform</a></code></b>
+            –
+            <div class="doc-md-description">
+              <p>Apply a perspective transformation to 2D points.</p>
+            </div>
+          </li>
+    </ul>
 
 
 
@@ -1806,6 +1869,188 @@ distortion coefficients. If False, ignores distortion correction.</p>
 
 </div>
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pupil_labs.camera.get_perspective_transform" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">get_perspective_transform</span>
+
+
+<a href="#pupil_labs.camera.get_perspective_transform" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">get_perspective_transform</span><span class="p">(</span><span class="n">points1</span><span class="p">:</span> <span class="n"><span title="pupil_labs.camera.custom_types.Points2DLike">Points2DLike</span></span><span class="p">,</span> <span class="n">points2</span><span class="p">:</span> <span class="n"><span title="pupil_labs.camera.custom_types.Points2DLike">Points2DLike</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="numpy.typing.NDArray">NDArray</span></span><span class="p">[</span><span class="n"><span title="pupil_labs.camera.custom_types.float64">float64</span></span><span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Compute a perspective transformation matrix from four point correspondences.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>points1</code></b>
+              (<code><span title="pupil_labs.camera.custom_types.Points2DLike">Points2DLike</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Array-like of 4 source 2D points.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>points2</code></b>
+              (<code><span title="pupil_labs.camera.custom_types.Points2DLike">Points2DLike</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Array-like of 4 destination 2D points.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="pupil_labs.camera.custom_types.float64">float64</span>]</code>
+          –
+          <div class="doc-md-description">
+            <p>3x3 perspective transformation matrix.</p>
+          </div>
+        </li>
+    </ul>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/pupil_labs/camera/utils.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_perspective_transform</span><span class="p">(</span>
+    <span class="n">points1</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">,</span> <span class="n">points2</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">CT</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute a perspective transformation matrix from four point correspondences.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        points1: Array-like of 4 source 2D points.</span>
+<span class="sd">        points2: Array-like of 4 destination 2D points.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        3x3 perspective transformation matrix.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">np_points_2d_1</span> <span class="o">=</span> <span class="n">to_np_point_array</span><span class="p">(</span><span class="n">points1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">np_points_2d_2</span> <span class="o">=</span> <span class="n">to_np_point_array</span><span class="p">(</span><span class="n">points2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">getPerspectiveTransform</span><span class="p">(</span>
+        <span class="n">np_points_2d_1</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">np_points_2d_2</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pupil_labs.camera.perspective_transform" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">perspective_transform</span>
+
+
+<a href="#pupil_labs.camera.perspective_transform" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">perspective_transform</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n"><span title="pupil_labs.camera.custom_types.Points2DLike">Points2DLike</span></span><span class="p">,</span> <span class="n">transform</span><span class="p">:</span> <span class="n"><span title="numpy.typing.NDArray">NDArray</span></span><span class="p">[</span><span class="n"><span title="pupil_labs.camera.custom_types.floating">floating</span></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><span title="pupil_labs.camera.custom_types.Points2D">Points2D</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Apply a perspective transformation to 2D points.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>points</code></b>
+              (<code><span title="pupil_labs.camera.custom_types.Points2DLike">Points2DLike</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Array-like of 2D point(s) to be transformed.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>transform</code></b>
+              (<code><span title="numpy.typing.NDArray">NDArray</span>[<span title="pupil_labs.camera.custom_types.floating">floating</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>3x3 perspective transformation matrix.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="pupil_labs.camera.custom_types.Points2D">Points2D</span></code>
+          –
+          <div class="doc-md-description">
+            <p>Transformed 2D points with the same shape as input.</p>
+          </div>
+        </li>
+    </ul>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/pupil_labs/camera/utils.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">perspective_transform</span><span class="p">(</span>
+    <span class="n">points</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">,</span> <span class="n">transform</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">CT</span><span class="o">.</span><span class="n">floating</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2D</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply a perspective transformation to 2D points.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        points: Array-like of 2D point(s) to be transformed.</span>
+<span class="sd">        transform: 3x3 perspective transformation matrix.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Transformed 2D points with the same shape as input.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">np_points_2d</span> <span class="o">=</span> <span class="n">to_np_point_array</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">points_trans</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">perspectiveTransform</span><span class="p">(</span><span class="n">np_points_2d</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">transform</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">points_trans</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
 
 
 
