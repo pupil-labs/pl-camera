@@ -1,5 +1,6 @@
 from typing import cast
 
+import cv2
 import numpy as np
 import numpy.typing as npt
 from numpy.lib.recfunctions import structured_to_unstructured
@@ -92,3 +93,42 @@ def to_np_point_array(
             f"Invalid coordinate shape: {arr.shape}. "
             f"Expected shape ({n_coords},) or (N, {n_coords})."
         )
+
+
+def perspective_transform(
+    points: CT.Points2DLike, transform: npt.NDArray[CT.floating]
+) -> CT.Points2D:
+    """Apply a perspective transformation to 2D points.
+
+    Args:
+        points: Array-like of 2D point(s) to be transformed.
+        transform: 3x3 perspective transformation matrix.
+
+    Returns:
+        Transformed 2D points with the same shape as input.
+
+    """
+    np_points_2d = to_np_point_array(points, 2)
+    points_trans = cv2.perspectiveTransform(np_points_2d.reshape(-1, 1, 2), transform)
+    return points_trans.reshape(-1, 2)
+
+
+def get_perspective_transform(
+    points1: CT.Points2DLike, points2: CT.Points2DLike
+) -> npt.NDArray[CT.float64]:
+    """Compute a perspective transformation matrix from four point correspondences.
+
+    Args:
+        points1: Array-like of 4 source 2D points.
+        points2: Array-like of 4 destination 2D points.
+
+    Returns:
+        3x3 perspective transformation matrix.
+
+    """
+    np_points_2d_1 = to_np_point_array(points1, 2)
+    np_points_2d_2 = to_np_point_array(points2, 2)
+
+    return cv2.getPerspectiveTransform(
+        np_points_2d_1.astype(np.float32), np_points_2d_2.astype(np.float32)
+    )

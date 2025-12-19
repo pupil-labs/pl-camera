@@ -7,5 +7,11 @@ with contextlib.suppress(PackageNotFoundError):
     __version__ = version("pupil_labs.camera")
 
 from .radial import Camera
+from .utils import get_perspective_transform, perspective_transform
 
-__all__ = ["Camera", "__version__"]
+__all__ = [
+    "Camera",
+    "__version__",
+    "get_perspective_transform",
+    "perspective_transform",
+]
