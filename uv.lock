@@ -1119,7 +1119,6 @@ source = { editable = "." }
 dependencies = [
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "opencv-python" },
 ]
 
 [package.dev-dependencies]
@@ -1137,6 +1136,7 @@ dev = [
     { name = "mkdocs-minify-plugin" },
     { name = "mkdocstrings", extra = ["python"] },
     { name = "mypy" },
+    { name = "opencv-python" },
     { name = "opencv-stubs" },
     { name = "pre-commit" },
     { name = "pytest" },
@@ -1146,10 +1146,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [
-    { name = "numpy" },
-    { name = "opencv-python", specifier = ">=4.11.0.86" },
-]
+requires-dist = [{ name = "numpy" }]
 
 [package.metadata.requires-dev]
 dev = [
@@ -1166,6 +1163,7 @@ dev = [
     { name = "mkdocs-minify-plugin", specifier = ">=0.8" },
     { name = "mkdocstrings", extras = ["python"], specifier = ">=0.25" },
     { name = "mypy", specifier = ">=0.991" },
+    { name = "opencv-python" },
     { name = "opencv-stubs" },
     { name = "pre-commit", specifier = ">=2.20.0" },
     { name = "pytest", specifier = ">=8.2" },

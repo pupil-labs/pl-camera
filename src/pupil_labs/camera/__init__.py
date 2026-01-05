@@ -6,6 +6,7 @@ from importlib.metadata import PackageNotFoundError, version
 with contextlib.suppress(PackageNotFoundError):
     __version__ = version("pupil_labs.camera")
 
+from . import opencv_check  # noqa: F401
 from .radial import Camera
 from .utils import get_perspective_transform, perspective_transform
 
