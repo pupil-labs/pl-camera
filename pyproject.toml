@@ -67,6 +67,9 @@ log_format = '%(asctime)s %(levelname)7s %(name)-60s | %(message)-100s "%(pathna
 [tool.coverage.report]
 skip_empty = true
 
+[project.optional-dependencies]
+examples = ["opencv-python"]
+
 [tool.coverage.run]
 branch = true
 source = ["pupil_labs"]
