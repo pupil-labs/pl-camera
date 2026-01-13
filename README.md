@@ -26,7 +26,7 @@ pip install -e git+https://github.com/pupil-labs/pl-camera.git
 
 ## Quick Start
 
-The following code demonstrates how to use the library in the context of a Neon recording to undistort an image and 2D gaze points.
+The following code demonstrates how to use the library in the context of a Neon recording to undistort an image and 2D gaze points. Additional examples can be found in the [example Jupyter Notebook](https://github.com/pupil-labs/pl-camera/blob/main/examples/undistorting.ipynb).
 
 ```python
 import cv2
