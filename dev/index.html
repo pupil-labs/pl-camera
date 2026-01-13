@@ -289,28 +289,6 @@
   
 
       
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="contributing/" class="md-tabs__link">
-          
-  
-  
-    
-  
-  Development
-
-        </a>
-      </li>
-    
-  
-
-      
     </ul>
   </div>
 </nav>
@@ -511,127 +489,6 @@
   
 
     
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Development
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Development
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="contributing/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Contributing
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="coverage/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Coverage report
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
   </ul>
 </nav>
                   </div>
@@ -665,6 +522,17 @@
     <span class="md-ellipsis">
       
         Installation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start
       
     </span>
   </a>
@@ -706,13 +574,59 @@
 <a href="https://github.com/pre-commit/pre-commit"><img alt="pre-commit" src="https://img.shields.io/badge/pre_commit-black?logo=pre-commit&amp;logoColor=FAB041" /></a>
 <a href="https://pypi.org/project/pupil-labs-camera/"><img alt="pypi version" src="https://img.shields.io/pypi/v/pupil-labs-camera.svg" /></a>
 <a href="https://pypi.org/project/pupil-labs-camera/"><img alt="python version" src="https://img.shields.io/pypi/pyversions/pupil-labs-camera" /></a></p>
-<p>This repo contains functionality around the usage of camera intrinsics for undistorting data, and projecting and unprojecting points.</p>
+<p>This repo contains functionality around the usage of camera intrinsics for undistorting data, projecting and unprojecting points.</p>
 <p>It is mostly a wrapper around OpenCV's functionality, providing type hints, input validation, a more intuitive interface, and some changes to improve computational performance.</p>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>pip install pupil-labs-camera
 </code></pre></div>
 <p>or</p>
 <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>git+https://github.com/pupil-labs/pl-camera.git
+</code></pre></div>
+<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<p>The following code demonstrates how to use the library in the context of a Neon recording to undistort an image and 2D gaze points.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pupil_labs</span><span class="w"> </span><span class="kn">import</span> <span class="n">neon_recording</span> <span class="k">as</span> <span class="n">nr</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pupil_labs.camera</span><span class="w"> </span><span class="kn">import</span> <span class="n">Camera</span>
+
+<span class="n">recording</span> <span class="o">=</span> <span class="n">nr</span><span class="o">.</span><span class="n">NeonRecording</span><span class="p">(</span>
+    <span class="s2">&quot;/path/to/recording&quot;</span>
+<span class="p">)</span>
+<span class="n">camera</span> <span class="o">=</span> <span class="n">Camera</span><span class="p">(</span>
+    <span class="n">pixel_width</span><span class="o">=</span><span class="mi">1600</span><span class="p">,</span>
+    <span class="n">pixel_height</span><span class="o">=</span><span class="mi">1200</span><span class="p">,</span>
+    <span class="n">camera_matrix</span><span class="o">=</span><span class="n">recording</span><span class="o">.</span><span class="n">calibration</span><span class="o">.</span><span class="n">scene_camera_matrix</span><span class="p">,</span>
+    <span class="n">distortion_coefficients</span><span class="o">=</span><span class="n">recording</span><span class="o">.</span><span class="n">calibration</span><span class="o">.</span><span class="n">scene_distortion_coefficients</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">recording</span><span class="o">.</span><span class="n">scene</span><span class="p">,</span> <span class="n">recording</span><span class="o">.</span><span class="n">gaze</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">recording</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">time</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">scene_frame</span><span class="p">,</span> <span class="n">gaze_sample</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+    <span class="n">distorted_image</span> <span class="o">=</span> <span class="n">scene_frame</span><span class="o">.</span><span class="n">bgr</span>
+    <span class="n">undistorted_image</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">undistort_image</span><span class="p">(</span><span class="n">distorted_image</span><span class="p">)</span>
+
+    <span class="n">distorted_gaze</span> <span class="o">=</span> <span class="n">gaze_sample</span><span class="o">.</span><span class="n">point</span>
+    <span class="n">undistorted_gaze</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">undistort_points</span><span class="p">(</span><span class="n">distorted_gaze</span><span class="p">)</span>
+
+    <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span>
+        <span class="n">distorted_image</span><span class="p">,</span>
+        <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">distorted_gaze</span><span class="p">)),</span>
+        <span class="n">radius</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+        <span class="n">thickness</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span>
+        <span class="n">undistorted_image</span><span class="p">,</span>
+        <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">undistorted_gaze</span><span class="p">)),</span>
+        <span class="n">radius</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">thickness</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;Distorted Image&quot;</span><span class="p">,</span> <span class="n">distorted_image</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;Undistorted Image&quot;</span><span class="p">,</span> <span class="n">undistorted_image</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
 </code></pre></div>
 
 

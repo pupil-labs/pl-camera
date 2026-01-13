@@ -16,8 +16,6 @@
         <link rel="prev" href="../license/">
       
       
-        <link rel="next" href="../contributing/">
-      
       
         
       
@@ -288,28 +286,6 @@
 
       </a>
     </li>
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../contributing/" class="md-tabs__link">
-          
-  
-  
-    
-  
-  Development
-
-        </a>
-      </li>
-    
   
 
       
@@ -669,127 +645,6 @@
   
 
     
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Development
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Development
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../contributing/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Contributing
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../coverage/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Coverage report
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
   </ul>
 </nav>
                   </div>
@@ -1005,7 +860,7 @@
           <b><code><a class="autorefs autorefs-internal" title="            Camera (pupil_labs.camera.Camera)" href="#pupil_labs.camera.Camera">Camera</a></code></b>
           –
           <div class="doc-md-description">
-            
+            <p>A camera model with radial distortion.</p>
           </div>
         </li>
     </ul>
@@ -1019,14 +874,14 @@
             <b><code><a class="autorefs autorefs-internal" title="            get_perspective_transform (pupil_labs.camera.get_perspective_transform)" href="#pupil_labs.camera.get_perspective_transform">get_perspective_transform</a></code></b>
             –
             <div class="doc-md-description">
-              <p>Compute a perspective transformation matrix from four point correspondences.</p>
+              <p>Computes a perspective transformation matrix from four point correspondences.</p>
             </div>
           </li>
           <li class="doc-section-item field-body">
             <b><code><a class="autorefs autorefs-internal" title="            perspective_transform (pupil_labs.camera.perspective_transform)" href="#pupil_labs.camera.perspective_transform">perspective_transform</a></code></b>
             –
             <div class="doc-md-description">
-              <p>Apply a perspective transformation to 2D points.</p>
+              <p>Applies a perspective transformation to 2D points.</p>
             </div>
           </li>
     </ul>
@@ -1061,6 +916,8 @@
 
 
 
+        <p>A camera model with radial distortion.</p>
+
 
 
 
@@ -1078,7 +935,7 @@
             <b><code><a class="autorefs autorefs-internal" title="            distort_image (pupil_labs.camera.Camera.distort_image)" href="#pupil_labs.camera.Camera.distort_image">distort_image</a></code></b>
             –
             <div class="doc-md-description">
-              <p>Return a distorted image</p>
+              <p>Distorts the provided image.</p>
             </div>
           </li>
           <li class="doc-section-item field-body">
@@ -1099,7 +956,7 @@
             <b><code><a class="autorefs autorefs-internal" title="            undistort_image (pupil_labs.camera.Camera.undistort_image)" href="#pupil_labs.camera.Camera.undistort_image">undistort_image</a></code></b>
             –
             <div class="doc-md-description">
-              <p>Return an undistorted image</p>
+              <p>Undistorts the provided image.</p>
             </div>
           </li>
           <li class="doc-section-item field-body">
@@ -1141,9 +998,7 @@
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">16</span>
 <span class="normal">17</span>
 <span class="normal">18</span>
 <span class="normal">19</span>
@@ -1153,7 +1008,9 @@
 <span class="normal">23</span>
 <span class="normal">24</span>
 <span class="normal">25</span>
-<span class="normal">26</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">pixel_width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">pixel_height</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -1224,7 +1081,7 @@ captured distorted image.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Return a distorted image</p>
+        <p>Distorts the provided image.</p>
 <p>This implementation uses cv2.remap with a precomputed map, instead of
 cv2.undistort. This is significantly faster when undistorting multiple images
 because the undistortion maps are computed only once.</p>
@@ -1255,9 +1112,7 @@ because the undistortion maps are computed only once.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">171</span>
-<span class="normal">172</span>
-<span class="normal">173</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">173</span>
 <span class="normal">174</span>
 <span class="normal">175</span>
 <span class="normal">176</span>
@@ -1284,12 +1139,14 @@ because the undistortion maps are computed only once.</p>
 <span class="normal">197</span>
 <span class="normal">198</span>
 <span class="normal">199</span>
-<span class="normal">200</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">distort_image</span><span class="p">(</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">distort_image</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">image</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Image</span><span class="p">,</span>
     <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CT</span><span class="o">.</span><span class="n">Image</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a distorted image</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Distorts the provided image.</span>
 
 <span class="sd">    This implementation uses cv2.remap with a precomputed map, instead of</span>
 <span class="sd">    cv2.undistort. This is significantly faster when undistorting multiple images</span>
@@ -1361,9 +1218,7 @@ because the undistortion maps are computed only once.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">324</span>
-<span class="normal">325</span>
-<span class="normal">326</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">326</span>
 <span class="normal">327</span>
 <span class="normal">328</span>
 <span class="normal">329</span>
@@ -1383,7 +1238,9 @@ because the undistortion maps are computed only once.</p>
 <span class="normal">343</span>
 <span class="normal">344</span>
 <span class="normal">345</span>
-<span class="normal">346</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">distort_points</span><span class="p">(</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">distort_points</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">points_2d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">,</span>
     <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1464,9 +1321,7 @@ coefficients. If False, ignores distortion.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">260</span>
-<span class="normal">261</span>
-<span class="normal">262</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">262</span>
 <span class="normal">263</span>
 <span class="normal">264</span>
 <span class="normal">265</span>
@@ -1500,7 +1355,9 @@ coefficients. If False, ignores distortion.</p>
 <span class="normal">293</span>
 <span class="normal">294</span>
 <span class="normal">295</span>
-<span class="normal">296</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">project_points</span><span class="p">(</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">project_points</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">points_3d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points3DLike</span><span class="p">,</span>
     <span class="n">use_distortion</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -1556,7 +1413,7 @@ coefficients. If False, ignores distortion.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Return an undistorted image</p>
+        <p>Undistorts the provided image.</p>
 <p>This implementation uses cv2.remap with a precomputed map, instead of
 cv2.undistort. This is significantly faster when undistorting multiple images
 because the undistortion maps are computed only once.</p>
@@ -1587,9 +1444,7 @@ because the undistortion maps are computed only once.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">141</span>
-<span class="normal">142</span>
-<span class="normal">143</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">143</span>
 <span class="normal">144</span>
 <span class="normal">145</span>
 <span class="normal">146</span>
@@ -1615,12 +1470,14 @@ because the undistortion maps are computed only once.</p>
 <span class="normal">166</span>
 <span class="normal">167</span>
 <span class="normal">168</span>
-<span class="normal">169</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_image</span><span class="p">(</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_image</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">image</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Image</span><span class="p">,</span>
     <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CT</span><span class="o">.</span><span class="n">Image</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return an undistorted image</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Undistorts the provided image.</span>
 
 <span class="sd">    This implementation uses cv2.remap with a precomputed map, instead of</span>
 <span class="sd">    cv2.undistort. This is significantly faster when undistorting multiple images</span>
@@ -1691,9 +1548,7 @@ because the undistortion maps are computed only once.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">298</span>
-<span class="normal">299</span>
-<span class="normal">300</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">300</span>
 <span class="normal">301</span>
 <span class="normal">302</span>
 <span class="normal">303</span>
@@ -1715,7 +1570,9 @@ because the undistortion maps are computed only once.</p>
 <span class="normal">319</span>
 <span class="normal">320</span>
 <span class="normal">321</span>
-<span class="normal">322</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_points</span><span class="p">(</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_points</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">points_2d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">,</span>
     <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1798,9 +1655,7 @@ distortion coefficients. If False, ignores distortion correction.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">230</span>
-<span class="normal">231</span>
-<span class="normal">232</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">232</span>
 <span class="normal">233</span>
 <span class="normal">234</span>
 <span class="normal">235</span>
@@ -1826,7 +1681,9 @@ distortion coefficients. If False, ignores distortion correction.</p>
 <span class="normal">255</span>
 <span class="normal">256</span>
 <span class="normal">257</span>
-<span class="normal">258</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unproject_points</span><span class="p">(</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unproject_points</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">points_2d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">,</span>
     <span class="n">use_distortion</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -1883,7 +1740,7 @@ distortion coefficients. If False, ignores distortion correction.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Compute a perspective transformation matrix from four point correspondences.</p>
+        <p>Computes a perspective transformation matrix from four point correspondences.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1942,7 +1799,7 @@ distortion coefficients. If False, ignores distortion correction.</p>
 <span class="normal">134</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_perspective_transform</span><span class="p">(</span>
     <span class="n">points1</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">,</span> <span class="n">points2</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">CT</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute a perspective transformation matrix from four point correspondences.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes a perspective transformation matrix from four point correspondences.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        points1: Array-like of 4 source 2D points.</span>
@@ -1977,7 +1834,7 @@ distortion coefficients. If False, ignores distortion correction.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Apply a perspective transformation to 2D points.</p>
+        <p>Applies a perspective transformation to 2D points.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -2033,7 +1890,7 @@ distortion coefficients. If False, ignores distortion correction.</p>
 <span class="normal">113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">perspective_transform</span><span class="p">(</span>
     <span class="n">points</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">,</span> <span class="n">transform</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">CT</span><span class="o">.</span><span class="n">floating</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2D</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply a perspective transformation to 2D points.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies a perspective transformation to 2D points.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        points: Array-like of 2D point(s) to be transformed.</span>
@@ -2109,22 +1966,6 @@ distortion coefficients. If False, ignores distortion correction.</p>
             </div>
           </a>
         
-        
-          
-          <a href="../contributing/" class="md-footer__link md-footer__link--next" aria-label="Next: Contributing">
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              <div class="md-ellipsis">
-                Contributing
-              </div>
-            </div>
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
-            </div>
-          </a>
         
       </nav>
     
