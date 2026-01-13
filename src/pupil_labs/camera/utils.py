@@ -98,7 +98,7 @@ def to_np_point_array(
 def perspective_transform(
     points: CT.Points2DLike, transform: npt.NDArray[CT.floating]
 ) -> CT.Points2D:
-    """Apply a perspective transformation to 2D points.
+    """Applies a perspective transformation to 2D points.
 
     Args:
         points: Array-like of 2D point(s) to be transformed.
@@ -116,7 +116,7 @@ def perspective_transform(
 def get_perspective_transform(
     points1: CT.Points2DLike, points2: CT.Points2DLike
 ) -> npt.NDArray[CT.float64]:
-    """Compute a perspective transformation matrix from four point correspondences.
+    """Computes a perspective transformation matrix from four point correspondences.
 
     Args:
         points1: Array-like of 4 source 2D points.

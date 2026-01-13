@@ -9,6 +9,8 @@ from pupil_labs.camera.utils import to_np_point_array
 
 
 class Camera:
+    """A camera model with radial distortion."""
+
     _distortion_coefficients: CT.DistortionCoefficients | None
 
     def __init__(
@@ -143,7 +145,7 @@ class Camera:
         image: CT.Image,
         use_optimal_camera_matrix: bool | None = None,
     ) -> CT.Image:
-        """Return an undistorted image
+        """Undistorts the provided image.
 
         This implementation uses cv2.remap with a precomputed map, instead of
         cv2.undistort. This is significantly faster when undistorting multiple images
@@ -173,7 +175,7 @@ class Camera:
         image: CT.Image,
         use_optimal_camera_matrix: bool | None = None,
     ) -> CT.Image:
-        """Return a distorted image
+        """Distorts the provided image.
 
         This implementation uses cv2.remap with a precomputed map, instead of
         cv2.undistort. This is significantly faster when undistorting multiple images

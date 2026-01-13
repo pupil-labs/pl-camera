@@ -50,6 +50,7 @@ ignore = [
         "D213",
         # ends-in-period
         "D400",
+        "D401",
         # dashed-underline-after-section
         "D407",
         # ends-in-punctuation
