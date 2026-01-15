@@ -10,7 +10,7 @@
 
 This repo contains functionality around the usage of camera intrinsics for undistorting data, projecting and unprojecting points.
 
-It is mostly a wrapper around OpenCV's functionality, providing type hints, input validation, a more intuitive interface, and some changes to improve computational performance.
+It is mostly a wrapper around OpenCV's functionality, providing type hints, input validation, a more intuitive interface, and a few performance optimizations.
 
 ## Installation
 
