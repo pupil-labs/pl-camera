@@ -26,13 +26,14 @@ def apply_distortion_model(
 
 
 def to_np_point_array(
-    coords: CT.Points2DLike | CT.Points3DLike, n_coords: int
+    coords: CT.Points2DLike | CT.Points3DLike, n_coords: int, fill: float | None = None
 ) -> npt.NDArray[np.float64]:
     """Convert/validate python/numpy/structured array of coordinates into unstructured
 
     Args:
         coords: list of coordinates
         n_coords: number of expected coordinates
+        fill: if set, adds missing n_coords using fill value
 
     Returns:
         (np.ndarray, bool)
@@ -62,6 +63,7 @@ def to_np_point_array(
 
     """
     arr = np.array(coords)
+    original_shape = arr.shape
 
     if arr.dtype.names is not None:
         try:
@@ -71,28 +73,33 @@ def to_np_point_array(
 
     arr = np.asarray(arr).astype(np.float64)
 
+    if arr.ndim == 3 and len(arr) == 1:
+        arr = cast(npt.NDArray[np.float64], arr[0])
+
     if arr.ndim == 1:
-        if len(arr) != n_coords:
+        missing_coords = n_coords - len(arr)
+        if missing_coords < 0 or (fill is None and len(arr) != n_coords):
             raise ValueError(
                 f"Expected {n_coords} coordinate values but got {len(arr)}."
             )
+        if missing_coords:
+            arr = np.hstack((arr, np.array(missing_coords * [fill])))
         return arr
 
     elif arr.ndim == 2:
-        if arr.shape[1] != n_coords:
+        missing_coords = n_coords - arr.shape[1]
+        if (fill is None and arr.shape[1] != n_coords) or missing_coords < 0:
             raise ValueError(
                 f"Expected {n_coords} coordinate values but array shape is {arr.shape}."
             )
+        if missing_coords:
+            arr = np.hstack((arr, np.full((arr.shape[0], missing_coords), fill)))
         return arr
 
-    else:
-        if arr.ndim == 3 and len(arr) == 1:
-            return cast(npt.NDArray[np.float64], arr[0])
-
-        raise ValueError(
-            f"Invalid coordinate shape: {arr.shape}. "
-            f"Expected shape ({n_coords},) or (N, {n_coords})."
-        )
+    raise ValueError(
+        f"Invalid coordinate shape: {original_shape}. "
+        f"Expected shape ({n_coords},) or (N, {n_coords})."
+    )
 
 
 def perspective_transform(

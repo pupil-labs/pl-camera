@@ -39,6 +39,7 @@ dev = [
     "deptry>=0.20.0",
     "tox-uv>=1.11.3",
     "pytest-cov>=4.0.0",
+    "pdbpp",
 
     # stubs
     "opencv-stubs",

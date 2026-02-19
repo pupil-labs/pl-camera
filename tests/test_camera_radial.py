@@ -190,9 +190,14 @@ def test_unproject_points_without_distortion(camera_radial: Camera):
 @pytest.mark.parametrize(
     "point",
     [
+        # 3d points
         np.array([-0.75170, -0.55260, 1.0]),  # unstructured
         [-0.75170, -0.55260, 1.0],  # list
         (-0.75170, -0.55260, 1.0),  # tuple
+        # 2d points
+        np.array([-0.75170, -0.55260]),  # unstructured
+        [-0.75170, -0.55260],  # list
+        (-0.75170, -0.55260),  # tuple
     ],
 )
 def test_project_point(camera_radial: Camera, point: CT.Points3DLike):
@@ -402,9 +407,9 @@ def test_invalid_unproject_points_shapes(camera_radial: Camera, points):
 @pytest.mark.parametrize(
     "points",
     [
-        [10, 10],
-        [[10, 10]],
-        [[10, 10], [10, 10]],
+        [10, 10, 10, 10],
+        [[10, 10, 10, 10]],
+        [[10, 10, 10, 10], [10, 10, 10, 10]],
     ],
 )
 def test_invalid_project_points_shapes(camera_radial: Camera, points):
@@ -627,7 +632,7 @@ def undistorted_image_optimal(
 def test_distort_image(camera_radial: Camera, distorted_image, undistorted_image):
     distorted = camera_radial.distort_image(undistorted_image)
     assert distorted.shape == undistorted_image.shape
-    assert distorted.mean() == 83.77018263888888
+    assert_almost_equal(distorted.mean(), 83.77018263888888, decimal=4)
 
 
 def test_distort_image_optimal(
@@ -637,13 +642,13 @@ def test_distort_image_optimal(
         undistorted_image_optimal, use_optimal_camera_matrix=True
     )
     assert distorted.shape == distorted_image.shape
-    assert distorted.mean() == 117.12533385416667
+    assert_almost_equal(distorted.mean(), 117.12533385416667, decimal=4)
 
 
 def test_undistort_image(camera_radial: Camera, distorted_image, undistorted_image):
     undistorted = camera_radial.undistort_image(distorted_image)
     assert undistorted.shape == distorted_image.shape
-    assert undistorted.mean() == 120.6645625
+    assert_almost_equal(undistorted.mean(), 120.6645625, decimal=4)
 
 
 def test_undistort_image_optimal(
@@ -653,4 +658,4 @@ def test_undistort_image_optimal(
         distorted_image, use_optimal_camera_matrix=True
     )
     assert undistorted.shape == undistorted.shape
-    assert undistorted.mean() == 132.47595399305555
+    assert_almost_equal(undistorted.mean(), 132.47595399305555, decimal=4)

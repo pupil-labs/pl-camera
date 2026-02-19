@@ -99,7 +99,7 @@ class Camera:
             alpha=0,
             centerPrincipalPoint=False,  # TODO(dan): test that gaze on center is correct here  # noqa: E501
         )
-        return np.array(optimal_camera_matrix, dtype=np.float64)
+        return np.array(optimal_camera_matrix, dtype=np.float32)
 
     @cached_property
     def _undistort_rectify_map(self) -> CT.RectifyMap:
@@ -259,7 +259,7 @@ class Camera:
 
     def project_points(
         self,
-        points_3d: CT.Points3DLike,
+        points_3d: CT.Point2DLike | CT.Points3DLike,
         use_distortion: bool = True,
         use_optimal_camera_matrix: bool | None = None,
     ) -> CT.Points2D:
@@ -272,7 +272,7 @@ class Camera:
             use_optimal_camera_matrix: If True applies optimal camera matrix
 
         """
-        np_points_3d = to_np_point_array(points_3d, 3)
+        np_points_3d = to_np_point_array(points_3d, 3, fill=1.0)
         distortion_coefficients = self._get_distortion_coefficients(use_distortion)
         camera_matrix = self._get_unprojection_camera_matrix(use_optimal_camera_matrix)
 
