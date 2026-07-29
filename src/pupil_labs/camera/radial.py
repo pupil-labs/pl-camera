@@ -89,6 +89,20 @@ class Camera:
                 )
             self._distortion_coefficients = distortion_coefficients
 
+    @property
+    def extrinsics_affine_matrix(self) -> CT.AffineMatrix:
+        return self._extrinsics_affine_matrix
+
+    @extrinsics_affine_matrix.setter
+    def extrinsics_affine_matrix(self, value: CT.AffineMatrixLike) -> None:
+        extrinsics_affine_matrix = np.asarray(value, dtype=np.float64)
+        extrinsics_shape = extrinsics_affine_matrix.shape
+        if extrinsics_shape != (4, 4):
+            raise ValueError(
+                f"extrinsics_affine_matrix should have 4x4 shape, got {'x'.join(map(str, extrinsics_shape))}"  # noqa: E501
+            )
+        self._extrinsics_affine_matrix = extrinsics_affine_matrix
+
     @cached_property
     def optimal_camera_matrix(self) -> CT.CameraMatrix:
         """The "optimal" camera matrix for undistorting images.
@@ -234,6 +248,11 @@ class Camera:
     ) -> CT.DistortionCoefficients | None:
         return self.distortion_coefficients if use_distortion else None
 
+    def _get_affine_transform_vectors(self) -> tuple[CT.AffineVector, CT.AffineVector]:
+        rvec, tvec = cv2.Rodrigues(self.extrinsics_affine_matrix[:3, :3])
+        tvec = self.extrinsics_affine_matrix[:3, 3].reshape((3, 1))
+        return rvec, tvec
+
     def unproject_points(
         self,
         points_2d: CT.Points2DLike,
@@ -270,7 +289,8 @@ class Camera:
         use_distortion: bool = True,
         use_optimal_camera_matrix: bool | None = None,
     ) -> CT.Points2D:
-        """Projects 3D points onto the 2D image plane using the camera's intrinsics.
+        """Projects 3D points onto the 2D image plane using the camera's intrinsics
+        and extrinsics.
 
         Args:
             points_3d: Array of 3D point(s) to be projected.
@@ -282,8 +302,7 @@ class Camera:
         np_points_3d = to_np_point_array(points_3d, 3)
         distortion_coefficients = self._get_distortion_coefficients(use_distortion)
         camera_matrix = self._get_unprojection_camera_matrix(use_optimal_camera_matrix)
-
-        rvec = tvec = np.zeros((1, 1, 3))
+        rvec, tvec = self._get_affine_transform_vectors()
 
         projected_2d, _ = cast(
             tuple[np.ndarray, np.ndarray],

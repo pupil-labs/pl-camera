@@ -654,3 +654,43 @@ def test_undistort_image_optimal(
     )
     assert undistorted.shape == undistorted.shape
     assert undistorted.mean() == 132.47595399305555
+
+
+def test__get_affine_transform_vectors__identity(camera_radial: Camera):
+    rvec, tvec = camera_radial._get_affine_transform_vectors()
+    assert np.allclose(rvec, 0)
+    assert np.allclose(tvec, 0)
+
+
+def test__get_affine_transform_vectors__translation(camera_radial: Camera):
+    camera_radial.extrinsics_affine_matrix = np.array(
+        [
+            [1, 0, 0, 10],
+            [0, 1, 0, 20],
+            [0, 0, 1, 30],
+            [0, 0, 0, 1],
+        ]
+    )
+    rvec, tvec = camera_radial._get_affine_transform_vectors()
+    assert np.allclose(rvec, 0)
+    assert np.allclose(tvec.flatten(), [10, 20, 30])
+
+
+def test__get_affine_transform_vectors__rotation(camera_radial: Camera):
+    angle = np.pi / 4
+    rotation_matrix = np.array(
+        [
+            [np.cos(angle), -np.sin(angle), 0],
+            [np.sin(angle), np.cos(angle), 0],
+            [0, 0, 1],
+        ]
+    )
+    extrinsics_affine_matrix = np.eye(4)
+    extrinsics_affine_matrix[:3, :3] = rotation_matrix
+
+    camera_radial.extrinsics_affine_matrix = extrinsics_affine_matrix
+    rvec, tvec = camera_radial._get_affine_transform_vectors()
+
+    # The rotation vector's norm should be equal to the rotation angle
+    assert np.allclose(np.linalg.norm(rvec), angle)
+    assert np.allclose(tvec, 0)
