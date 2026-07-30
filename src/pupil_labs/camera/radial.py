@@ -99,7 +99,8 @@ class Camera:
         extrinsics_shape = extrinsics_affine_matrix.shape
         if extrinsics_shape != (4, 4):
             raise ValueError(
-                f"extrinsics_affine_matrix should have 4x4 shape, got {'x'.join(map(str, extrinsics_shape))}"  # noqa: E501
+                f"extrinsics_affine_matrix should have 4x4 shape, "
+                f"got {'x'.join(map(str, extrinsics_shape))}"
             )
         self._extrinsics_affine_matrix = extrinsics_affine_matrix
 
@@ -254,7 +255,7 @@ class Camera:
         if not use_extrinsics:
             rvec = tvec = np.zeros((3, 1), dtype=np.float64)
             return rvec, tvec
-        
+
         rvec, _ = cv2.Rodrigues(self.extrinsics_affine_matrix[:3, :3])
         tvec = self.extrinsics_affine_matrix[:3, 3].reshape((3, 1))
         return rvec, tvec
@@ -296,8 +297,7 @@ class Camera:
         use_optimal_camera_matrix: bool | None = None,
         use_extrinsics: bool = True,
     ) -> CT.Points2D:
-        """Projects 3D points onto the 2D image plane using the camera's intrinsics
-        and extrinsics.
+        """Projects 3D points onto the 2D image plane using the camera's intrinsics.
 
         Args:
             points_3d: Array of 3D point(s) to be projected.

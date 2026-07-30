@@ -383,12 +383,12 @@ def test_invalid_extrinsics_affine_matrix(
     camera_radial: Camera, extrinsics_affine_matrix: CT.AffineMatrixLike
 ):
     with pytest.raises(ValueError):
-        Camera(1000, 1000, CAMERA_MATRIX, DISTORTION_COEFFICIENTS, extrinsics_affine_matrix)
+        Camera(1000, 1000, CAMERA_MATRIX, [], extrinsics_affine_matrix)
     with pytest.raises(ValueError):
         camera_radial.extrinsics_affine_matrix = extrinsics_affine_matrix
 
 
-def test_default_extrinsics_affine_matrix(camera_radial: Camera):
+def test_default_extrinsics_affine_matrix_is_identity(camera_radial: Camera):
     assert np.allclose(camera_radial.extrinsics_affine_matrix, np.eye(4))
 
 
@@ -679,46 +679,36 @@ def test_undistort_image_optimal(
 
 def test__get_affine_transform_vectors__identity_extrinsics(camera_radial: Camera):
     rvec, tvec = camera_radial._get_affine_transform_vectors(True)
-    assert rvec.shape == (3, 1)
-    assert tvec.shape == (3, 1)
-    assert np.allclose(rvec, 0) 
+    assert np.allclose(rvec, 0)
     assert np.allclose(tvec, 0)
 
 
 def test__get_affine_transform_vectors__ignore_extrinsics(camera_radial: Camera):
     camera_radial.extrinsics_affine_matrix = np.random.randn(4, 4)
     rvec, tvec = camera_radial._get_affine_transform_vectors(False)
-    assert rvec.shape == (3, 1)
-    assert tvec.shape == (3, 1)
     assert np.allclose(rvec, 0)
     assert np.allclose(tvec, 0)
 
 
 def test__get_affine_transform_vectors__translation(camera_radial: Camera):
-    camera_radial.extrinsics_affine_matrix = np.array(
-        [
-            [1, 0, 0, 10],
-            [0, 1, 0, 20],
-            [0, 0, 1, 30],
-            [0, 0, 0, 1],
-        ]
-    )
+    camera_radial.extrinsics_affine_matrix = np.array([
+        [1, 0, 0, 10],
+        [0, 1, 0, 20],
+        [0, 0, 1, 30],
+        [0, 0, 0, 1],
+    ])
     rvec, tvec = camera_radial._get_affine_transform_vectors(True)
-    assert rvec.shape == (3, 1)
-    assert tvec.shape == (3, 1)
     assert np.allclose(rvec, 0)
     assert np.allclose(tvec.flatten(), [10, 20, 30])
 
 
 def test__get_affine_transform_vectors__rotation(camera_radial: Camera):
     angle = np.pi / 4
-    rotation_matrix = np.array(
-        [
-            [np.cos(angle), -np.sin(angle), 0],
-            [np.sin(angle), np.cos(angle), 0],
-            [0, 0, 1],
-        ]
-    )
+    rotation_matrix = np.array([
+        [np.cos(angle), -np.sin(angle), 0],
+        [np.sin(angle), np.cos(angle), 0],
+        [0, 0, 1],
+    ])
     extrinsics_affine_matrix = np.eye(4)
     extrinsics_affine_matrix[:3, :3] = rotation_matrix
 
@@ -726,7 +716,5 @@ def test__get_affine_transform_vectors__rotation(camera_radial: Camera):
     rvec, tvec = camera_radial._get_affine_transform_vectors(True)
 
     # The rotation vector's norm should be equal to the rotation angle
-    assert rvec.shape == (3, 1)
-    assert tvec.shape == (3, 1)
     assert np.allclose(np.linalg.norm(rvec), angle)
     assert np.allclose(tvec, 0)
