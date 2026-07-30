@@ -248,8 +248,14 @@ class Camera:
     ) -> CT.DistortionCoefficients | None:
         return self.distortion_coefficients if use_distortion else None
 
-    def _get_affine_transform_vectors(self) -> tuple[CT.AffineVector, CT.AffineVector]:
-        rvec, tvec = cv2.Rodrigues(self.extrinsics_affine_matrix[:3, :3])
+    def _get_affine_transform_vectors(
+        self, use_extrinsics: bool
+    ) -> tuple[CT.AffineVector, CT.AffineVector]:
+        if not use_extrinsics:
+            rvec = tvec = np.zeros((3, 1), dtype=np.float64)
+            return rvec, tvec
+        
+        rvec, _ = cv2.Rodrigues(self.extrinsics_affine_matrix[:3, :3])
         tvec = self.extrinsics_affine_matrix[:3, 3].reshape((3, 1))
         return rvec, tvec
 
@@ -288,6 +294,7 @@ class Camera:
         points_3d: CT.Points3DLike,
         use_distortion: bool = True,
         use_optimal_camera_matrix: bool | None = None,
+        use_extrinsics: bool = True,
     ) -> CT.Points2D:
         """Projects 3D points onto the 2D image plane using the camera's intrinsics
         and extrinsics.
@@ -297,12 +304,15 @@ class Camera:
             use_distortion: If True, applies distortion using the camera's distortion
                 coefficients. If False, ignores distortion.
             use_optimal_camera_matrix: If True applies optimal camera matrix
+            use_extrinsics: If True, transforms the 3D points from world to camera
+                coordinates using the camera's extrinsic parameters before projection.
+                If False, assumes that the 3D points are already in camera coordinates.
 
         """
         np_points_3d = to_np_point_array(points_3d, 3)
         distortion_coefficients = self._get_distortion_coefficients(use_distortion)
         camera_matrix = self._get_unprojection_camera_matrix(use_optimal_camera_matrix)
-        rvec, tvec = self._get_affine_transform_vectors()
+        rvec, tvec = self._get_affine_transform_vectors(use_extrinsics)
 
         projected_2d, _ = cast(
             tuple[np.ndarray, np.ndarray],
