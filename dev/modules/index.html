@@ -949,7 +949,7 @@
             <b><code><a class="autorefs autorefs-internal" title="            project_points (pupil_labs.camera.Camera.project_points)" href="#pupil_labs.camera.Camera.project_points">project_points</a></code></b>
             –
             <div class="doc-md-description">
-              <p>Projects 3D points onto the 2D image plane using the camera's intrinsics</p>
+              <p>Projects 3D points onto the 2D image plane using the camera's intrinsics.</p>
             </div>
           </li>
           <li class="doc-section-item field-body">
@@ -1122,8 +1122,7 @@ because the undistortion maps are computed only once.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">192</span>
-<span class="normal">193</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">193</span>
 <span class="normal">194</span>
 <span class="normal">195</span>
 <span class="normal">196</span>
@@ -1151,7 +1150,8 @@ because the undistortion maps are computed only once.</p>
 <span class="normal">218</span>
 <span class="normal">219</span>
 <span class="normal">220</span>
-<span class="normal">221</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">distort_image</span><span class="p">(</span>
+<span class="normal">221</span>
+<span class="normal">222</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">distort_image</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">image</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Image</span><span class="p">,</span>
     <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1292,8 +1292,7 @@ because the undistortion maps are computed only once.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Projects 3D points onto the 2D image plane using the camera's intrinsics
-and extrinsics.</p>
+        <p>Projects 3D points onto the 2D image plane using the camera's intrinsics.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1344,8 +1343,7 @@ If False, assumes that the 3D points are already in camera coordinates.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">292</span>
-<span class="normal">293</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">293</span>
 <span class="normal">294</span>
 <span class="normal">295</span>
 <span class="normal">296</span>
@@ -1391,8 +1389,7 @@ If False, assumes that the 3D points are already in camera coordinates.</p>
     <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">use_extrinsics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2D</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Projects 3D points onto the 2D image plane using the camera&#39;s intrinsics</span>
-<span class="sd">    and extrinsics.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Projects 3D points onto the 2D image plane using the camera&#39;s intrinsics.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        points_3d: Array of 3D point(s) to be projected.</span>
@@ -1475,8 +1472,7 @@ because the undistortion maps are computed only once.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">162</span>
-<span class="normal">163</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">163</span>
 <span class="normal">164</span>
 <span class="normal">165</span>
 <span class="normal">166</span>
@@ -1503,7 +1499,8 @@ because the undistortion maps are computed only once.</p>
 <span class="normal">187</span>
 <span class="normal">188</span>
 <span class="normal">189</span>
-<span class="normal">190</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_image</span><span class="p">(</span>
+<span class="normal">190</span>
+<span class="normal">191</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">undistort_image</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">image</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Image</span><span class="p">,</span>
     <span class="n">use_optimal_camera_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1686,8 +1683,7 @@ distortion coefficients. If False, ignores distortion correction.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/pupil_labs/camera/radial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">262</span>
-<span class="normal">263</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">263</span>
 <span class="normal">264</span>
 <span class="normal">265</span>
 <span class="normal">266</span>
@@ -1714,7 +1710,8 @@ distortion coefficients. If False, ignores distortion correction.</p>
 <span class="normal">287</span>
 <span class="normal">288</span>
 <span class="normal">289</span>
-<span class="normal">290</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unproject_points</span><span class="p">(</span>
+<span class="normal">290</span>
+<span class="normal">291</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unproject_points</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">points_2d</span><span class="p">:</span> <span class="n">CT</span><span class="o">.</span><span class="n">Points2DLike</span><span class="p">,</span>
     <span class="n">use_distortion</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
