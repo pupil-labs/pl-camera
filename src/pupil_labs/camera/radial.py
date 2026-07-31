@@ -97,10 +97,11 @@ class Camera:
     def extrinsics_affine_matrix(self, value: CT.AffineMatrixLike) -> None:
         extrinsics_affine_matrix = np.asarray(value, dtype=np.float64)
         extrinsics_shape = extrinsics_affine_matrix.shape
-        if extrinsics_shape != (4, 4):
+        if extrinsics_shape not in [(3, 3), (4, 4)]:
+            shape_str = "x".join(map(str, extrinsics_shape))
             raise ValueError(
-                f"extrinsics_affine_matrix should have 4x4 shape, "
-                f"got {'x'.join(map(str, extrinsics_shape))}"
+                f"extrinsics_affine_matrix should have either 3x3 (rotation only) "
+                f"or 4x4 shape (rotation and translation), got {shape_str}"
             )
         self._extrinsics_affine_matrix = extrinsics_affine_matrix
 
@@ -257,7 +258,11 @@ class Camera:
             return rvec, tvec
 
         rvec, _ = cv2.Rodrigues(self.extrinsics_affine_matrix[:3, :3])
-        tvec = self.extrinsics_affine_matrix[:3, 3].reshape((3, 1))
+        if self.extrinsics_affine_matrix.shape[1] == 3:
+            tvec = np.zeros((3, 1), dtype=np.float64)
+        else:
+            tvec = self.extrinsics_affine_matrix[:3, 3].reshape((3, 1))
+
         return rvec, tvec
 
     def unproject_points(
@@ -295,7 +300,7 @@ class Camera:
         points_3d: CT.Points3DLike,
         use_distortion: bool = True,
         use_optimal_camera_matrix: bool | None = None,
-        use_extrinsics: bool = True,
+        use_extrinsics: bool = False,
     ) -> CT.Points2D:
         """Projects 3D points onto the 2D image plane using the camera's intrinsics.
 
@@ -306,7 +311,8 @@ class Camera:
             use_optimal_camera_matrix: If True applies optimal camera matrix
             use_extrinsics: If True, transforms the 3D points from world to camera
                 coordinates using the camera's extrinsic parameters before projection.
-                If False, assumes that the 3D points are already in camera coordinates.
+                If False (default), assumes that the 3D points are already in camera
+                coordinates.
 
         """
         np_points_3d = to_np_point_array(points_3d, 3)
