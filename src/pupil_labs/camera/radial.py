@@ -26,9 +26,6 @@ class Camera:
         self.pixel_height = pixel_height
         self.camera_matrix = camera_matrix
         self.distortion_coefficients = distortion_coefficients
-
-        if extrinsics_affine_matrix is None:
-            extrinsics_affine_matrix = np.eye(4, dtype=np.float64)
         self.extrinsics_affine_matrix = extrinsics_affine_matrix
         self.use_optimal_camera_matrix = use_optimal_camera_matrix
 
@@ -94,8 +91,11 @@ class Camera:
         return self._extrinsics_affine_matrix
 
     @extrinsics_affine_matrix.setter
-    def extrinsics_affine_matrix(self, value: CT.AffineMatrixLike) -> None:
-        extrinsics_affine_matrix = np.asarray(value, dtype=np.float64)
+    def extrinsics_affine_matrix(self, value: CT.AffineMatrixLike | None) -> None:
+        if value is None:
+            extrinsics_affine_matrix = np.eye(4, dtype=np.float64)
+        else:
+            extrinsics_affine_matrix = np.asarray(value, dtype=np.float64)
         extrinsics_shape = extrinsics_affine_matrix.shape
         if extrinsics_shape not in [(3, 3), (4, 4)]:
             shape_str = "x".join(map(str, extrinsics_shape))
