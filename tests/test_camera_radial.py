@@ -376,7 +376,8 @@ def test_valid_distortion_coefficients(
     [
         [],
         [[1, 2, 3, 4], [1, 2, 3, 4]],
-        [[1, 2, 3], [1, 2, 3], [1, 2, 3]],
+        [[1, 2, 3], [1, 2, 3]],
+        [[1, 2], [1, 2]],
     ],
 )
 def test_invalid_extrinsics_affine_matrix(
@@ -690,6 +691,29 @@ def test_get_affine_transform_vectors_ignore_extrinsics(camera_radial: Camera):
     assert np.allclose(tvec, 0)
 
 
+def _rotation_matrix(angle: float) -> np.ndarray:
+    """Return a 3x3 rotation matrix for a given angle around the Z-axis."""
+    return np.array([
+        [np.cos(angle), -np.sin(angle), 0],
+        [np.sin(angle), np.cos(angle), 0],
+        [0, 0, 1],
+    ])
+
+
+@pytest.mark.parametrize("angle", [0, np.pi / 4, np.pi / 2, np.pi])
+def test_get_affine_transform_vectors_3x3_extrinsics(
+    angle: float, camera_radial: Camera
+):
+    camera_radial.extrinsics_affine_matrix = _rotation_matrix(angle)
+    rvec, tvec = camera_radial._get_affine_transform_vectors(True)
+
+    # The rotation vector's norm should be equal to the rotation angle
+    assert np.isclose(np.linalg.norm(rvec), angle)
+
+    # 3x3 extrinsics imply no translation
+    assert np.allclose(tvec, 0)
+
+
 def test_get_affine_transform_vectors_translation(camera_radial: Camera):
     camera_radial.extrinsics_affine_matrix = np.array([
         [1, 0, 0, 10],
@@ -702,15 +726,10 @@ def test_get_affine_transform_vectors_translation(camera_radial: Camera):
     assert np.allclose(tvec.flatten(), [10, 20, 30])
 
 
-def test_get_affine_transform_vectors_rotation(camera_radial: Camera):
-    angle = np.pi / 4
-    rotation_matrix = np.array([
-        [np.cos(angle), -np.sin(angle), 0],
-        [np.sin(angle), np.cos(angle), 0],
-        [0, 0, 1],
-    ])
+@pytest.mark.parametrize("angle", [0, np.pi / 4, np.pi / 2, np.pi])
+def test_get_affine_transform_vectors_rotation(angle: float, camera_radial: Camera):
     extrinsics_affine_matrix = np.eye(4)
-    extrinsics_affine_matrix[:3, :3] = rotation_matrix
+    extrinsics_affine_matrix[:3, :3] = _rotation_matrix(angle)
 
     camera_radial.extrinsics_affine_matrix = extrinsics_affine_matrix
     rvec, tvec = camera_radial._get_affine_transform_vectors(True)
