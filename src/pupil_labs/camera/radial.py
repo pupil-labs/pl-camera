@@ -253,13 +253,13 @@ class Camera:
     def _get_affine_transform_vectors(
         self, use_extrinsics: bool
     ) -> tuple[CT.AffineVector, CT.AffineVector]:
+        fallback_vector = np.zeros((3, 1), dtype=np.float64)
         if not use_extrinsics:
-            rvec = tvec = np.zeros((3, 1), dtype=np.float64)
-            return rvec, tvec
+            return fallback_vector, fallback_vector
 
         rvec, _ = cv2.Rodrigues(self.extrinsics_affine_matrix[:3, :3])
         if self.extrinsics_affine_matrix.shape[1] == 3:
-            tvec = np.zeros((3, 1), dtype=np.float64)
+            tvec = fallback_vector
         else:
             tvec = self.extrinsics_affine_matrix[:3, 3].reshape((3, 1))
 
