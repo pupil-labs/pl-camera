@@ -1012,10 +1012,7 @@
 <span class="normal">27</span>
 <span class="normal">28</span>
 <span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">30</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">pixel_width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">pixel_height</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -1028,9 +1025,6 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">pixel_height</span> <span class="o">=</span> <span class="n">pixel_height</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">camera_matrix</span> <span class="o">=</span> <span class="n">camera_matrix</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">distortion_coefficients</span> <span class="o">=</span> <span class="n">distortion_coefficients</span>
-
-    <span class="k">if</span> <span class="n">extrinsics_affine_matrix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">extrinsics_affine_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">extrinsics_affine_matrix</span> <span class="o">=</span> <span class="n">extrinsics_affine_matrix</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">use_optimal_camera_matrix</span> <span class="o">=</span> <span class="n">use_optimal_camera_matrix</span>
 </code></pre></div></td></tr></table></div>
