@@ -677,20 +677,20 @@ def test_undistort_image_optimal(
     assert undistorted.mean() == 132.47595399305555
 
 
-def test__get_affine_transform_vectors__identity_extrinsics(camera_radial: Camera):
+def test_get_affine_transform_vectors_identity_extrinsics(camera_radial: Camera):
     rvec, tvec = camera_radial._get_affine_transform_vectors(True)
     assert np.allclose(rvec, 0)
     assert np.allclose(tvec, 0)
 
 
-def test__get_affine_transform_vectors__ignore_extrinsics(camera_radial: Camera):
+def test_get_affine_transform_vectors_ignore_extrinsics(camera_radial: Camera):
     camera_radial.extrinsics_affine_matrix = np.random.randn(4, 4)
     rvec, tvec = camera_radial._get_affine_transform_vectors(False)
     assert np.allclose(rvec, 0)
     assert np.allclose(tvec, 0)
 
 
-def test__get_affine_transform_vectors__translation(camera_radial: Camera):
+def test_get_affine_transform_vectors_translation(camera_radial: Camera):
     camera_radial.extrinsics_affine_matrix = np.array([
         [1, 0, 0, 10],
         [0, 1, 0, 20],
@@ -702,7 +702,7 @@ def test__get_affine_transform_vectors__translation(camera_radial: Camera):
     assert np.allclose(tvec.flatten(), [10, 20, 30])
 
 
-def test__get_affine_transform_vectors__rotation(camera_radial: Camera):
+def test_get_affine_transform_vectors_rotation(camera_radial: Camera):
     angle = np.pi / 4
     rotation_matrix = np.array([
         [np.cos(angle), -np.sin(angle), 0],
