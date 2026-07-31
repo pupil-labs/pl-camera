@@ -19,12 +19,14 @@ class Camera:
         pixel_height: int,
         camera_matrix: CT.CameraMatrixLike,
         distortion_coefficients: CT.DistortionCoefficientsLike | None = None,
+        extrinsics_affine_matrix: CT.AffineMatrixLike | None = None,
         use_optimal_camera_matrix: bool = False,
     ):
         self.pixel_width = pixel_width
         self.pixel_height = pixel_height
         self.camera_matrix = camera_matrix
         self.distortion_coefficients = distortion_coefficients
+        self.extrinsics_affine_matrix = extrinsics_affine_matrix
         self.use_optimal_camera_matrix = use_optimal_camera_matrix
 
     @property
@@ -83,6 +85,25 @@ class Camera:
                     f"distortion_coefficients should be None or have a size of {valid_lengths}"  # noqa: E501
                 )
             self._distortion_coefficients = distortion_coefficients
+
+    @property
+    def extrinsics_affine_matrix(self) -> CT.AffineMatrix:
+        return self._extrinsics_affine_matrix
+
+    @extrinsics_affine_matrix.setter
+    def extrinsics_affine_matrix(self, value: CT.AffineMatrixLike | None) -> None:
+        if value is None:
+            extrinsics_affine_matrix = np.eye(4, dtype=np.float64)
+        else:
+            extrinsics_affine_matrix = np.asarray(value, dtype=np.float64)
+        extrinsics_shape = extrinsics_affine_matrix.shape
+        if extrinsics_shape not in [(3, 3), (4, 4)]:
+            shape_str = "x".join(map(str, extrinsics_shape))
+            raise ValueError(
+                f"extrinsics_affine_matrix should have either 3x3 (rotation only) "
+                f"or 4x4 shape (rotation and translation), got {shape_str}"
+            )
+        self._extrinsics_affine_matrix = extrinsics_affine_matrix
 
     @cached_property
     def optimal_camera_matrix(self) -> CT.CameraMatrix:
@@ -229,6 +250,21 @@ class Camera:
     ) -> CT.DistortionCoefficients | None:
         return self.distortion_coefficients if use_distortion else None
 
+    def _get_affine_transform_vectors(
+        self, use_extrinsics: bool
+    ) -> tuple[CT.AffineVector, CT.AffineVector]:
+        fallback_vector = np.zeros((3, 1), dtype=np.float64)
+        if not use_extrinsics:
+            return fallback_vector, fallback_vector
+
+        rvec, _ = cv2.Rodrigues(self.extrinsics_affine_matrix[:3, :3])
+        if self.extrinsics_affine_matrix.shape[1] == 3:
+            tvec = fallback_vector
+        else:
+            tvec = self.extrinsics_affine_matrix[:3, 3].reshape((3, 1))
+
+        return rvec, tvec
+
     def unproject_points(
         self,
         points_2d: CT.Points2DLike,
@@ -264,6 +300,7 @@ class Camera:
         points_3d: CT.Points3DLike,
         use_distortion: bool = True,
         use_optimal_camera_matrix: bool | None = None,
+        use_extrinsics: bool = False,
     ) -> CT.Points2D:
         """Projects 3D points onto the 2D image plane using the camera's intrinsics.
 
@@ -272,13 +309,16 @@ class Camera:
             use_distortion: If True, applies distortion using the camera's distortion
                 coefficients. If False, ignores distortion.
             use_optimal_camera_matrix: If True applies optimal camera matrix
+            use_extrinsics: If True, transforms the 3D points from world to camera
+                coordinates using the camera's extrinsic parameters before projection.
+                If False (default), assumes that the 3D points are already in camera
+                coordinates.
 
         """
         np_points_3d = to_np_point_array(points_3d, 3)
         distortion_coefficients = self._get_distortion_coefficients(use_distortion)
         camera_matrix = self._get_unprojection_camera_matrix(use_optimal_camera_matrix)
-
-        rvec = tvec = np.zeros((1, 1, 3))
+        rvec, tvec = self._get_affine_transform_vectors(use_extrinsics)
 
         projected_2d, _ = cast(
             tuple[np.ndarray, np.ndarray],
