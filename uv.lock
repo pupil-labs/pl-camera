@@ -1122,11 +1122,6 @@ dependencies = [
     { name = "opencv-python" },
 ]
 
-[package.optional-dependencies]
-examples = [
-    { name = "opencv-python" },
-]
-
 [package.dev-dependencies]
 dev = [
     { name = "deptry" },
@@ -1155,7 +1150,6 @@ dev = [
 requires-dist = [
     { name = "numpy" },
     { name = "opencv-python", specifier = ">=4.11.0.86" },
-    { name = "opencv-python", marker = "extra == 'examples'" },
 ]
 provides-extras = ["examples"]
 
