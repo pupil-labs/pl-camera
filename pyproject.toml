@@ -18,7 +18,10 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
-dependencies = ["numpy"]
+dependencies = [
+    "numpy",
+    "opencv-python>=4.11.0.86",
+]
 
 [project.urls]
 Homepage = "https://pupil-labs.github.io/pl-camera"
