@@ -18,7 +18,10 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
-dependencies = ["numpy"]
+dependencies = [
+    "numpy",
+    "opencv-python>=4.11.0.86",
+]
 
 [project.urls]
 Homepage = "https://pupil-labs.github.io/pl-camera"
@@ -68,7 +71,7 @@ log_format = '%(asctime)s %(levelname)7s %(name)-60s | %(message)-100s "%(pathna
 skip_empty = true
 
 [project.optional-dependencies]
-examples = ["opencv-python"]
+examples = []
 
 [tool.coverage.run]
 branch = true
